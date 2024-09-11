@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Voter pour {{ poste }} - Élections du Club{% endblock %}
+
+{% block content %}
+    <h2>Voter pour le poste de {{ poste }}</h2>
+    {% if candidats %}
+        <form method="POST" action="{{ url_for('templates.vote', poste=poste) }}">
+            <div>
+                <label for="matricule">Votre matricule :</label>
+                <input type="text" id="matricule" name="matricule" required>
+            </div>
+            <h3>Choisissez votre candidat :</h3>
+            {% for candidat in candidats %}
+                <div>
+                    <input type="radio" id="candidat_{{ candidat.id }}" name="candidat_id" value="{{ candidat.id }}" required>
+                    <label for="candidat_{{ candidat.id }}">{{ candidat.nom }}</label>
+                    <p>Programme : {{ candidat.programme }}</p>
+                </div>
+            {% endfor %}
+            <button type="submit">Voter</button>
+        </form>
+    {% else %}
+        <p>Aucun candidat n'est actuellement enregistré pour ce poste.</p>
+    {% endif %}
+{% endblock %}

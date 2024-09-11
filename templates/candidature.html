@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Poser sa candidature - Élections du Club{% endblock %}
+
+{% block content %}
+    <h2>Poser sa candidature</h2>
+    <form method="POST" action="{{ url_for('templates.candidature') }}">
+        <div>
+            <label for="matricule">Matricule :</label>
+            <input type="text" id="matricule" name="matricule" required>
+        </div>
+        <div>
+            <label for="nom">Nom complet :</label>
+            <input type="text" id="nom" name="nom" required>
+        </div>
+        <div>
+            <label for="poste">Poste :</label>
+            <select id="poste" name="poste" required>
+                {% for code, nom in postes.items() %}
+                    <option value="{{ code }}">{{ nom }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="programme">Programme :</label>
+            <textarea id="programme" name="programme" rows="5" required></textarea>
+        </div>
+        <button type="submit">Soumettre la candidature</button>
+    </form>
+{% endblock %}

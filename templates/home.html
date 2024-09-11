@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Accueil - Élections du Club{% endblock %}
+
+{% block content %}
+    <h2>Bienvenue aux élections du club</h2>
+    <p>Choisissez une action :</p>
+    <ul>
+        <li><a href="{{ url_for('templates.candidature') }}">Poser votre candidature</a></li>
+    </ul>
+
+    <h3>Postes à pourvoir :</h3>
+    <ul>
+        {% for code, nom in postes.items() %}
+            <li><a href="{{ url_for('templates.vote', poste=code) }}">Voter pour le poste de {{ nom }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}
