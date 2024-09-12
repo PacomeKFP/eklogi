@@ -10,7 +10,7 @@
 [ ] TODO: Rajouter une page pour les resultats des elections
     On peut faire un Pie Diagram pour montrer les pourcentages et faire une liste des candidats par pourcentages croissants
 
-
+[ ] TODO: creer une image docker et tenter un deploiement
     V1.2
 [ ] MOdifier le champ programme en MD editor, et s'assurer qu'on puisse voir le contenu
 
