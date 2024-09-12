@@ -1,0 +1,18 @@
+[ ] TODO: lister les matricules des etudiants de 3 et 4GI
+    cela permettra de definir qui peut voter et qui peut candidater
+    On peut demander aux délégués, et donner en TAF aux 3GI l'extraction
+
+[ ] TODO: Rajouter un mecanisme pour empecher qu'on ne revote une fois les elections passées (sequencer les elections) et creer des phases
+    phase pour les candidatures
+    phase pour les elections
+        les elections ont des sous phases qui correspondent à des postes
+
+[ ] TODO: Rajouter une page pour les resultats des elections
+    On peut faire un Pie Diagram pour montrer les pourcentages et faire une liste des candidats par pourcentages croissants
+
+
+    V1.2
+[ ] MOdifier le champ programme en MD editor, et s'assurer qu'on puisse voir le contenu
+
+    V2
+[ ] TODO: Changer l'acceuil pour y mettre la liste des elections disponibles, avec un filtre

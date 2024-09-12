@@ -3,28 +3,32 @@
 {% block title %}Poser sa candidature - Élections du Club{% endblock %}
 
 {% block content %}
-    <h2>Poser sa candidature</h2>
-    <form method="POST" action="{{ url_for('templates.candidature') }}">
-        <div>
-            <label for="matricule">Matricule :</label>
-            <input type="text" id="matricule" name="matricule" required>
-        </div>
-        <div>
-            <label for="nom">Nom complet :</label>
-            <input type="text" id="nom" name="nom" required>
-        </div>
-        <div>
-            <label for="poste">Poste :</label>
-            <select id="poste" name="poste" required>
-                {% for code, nom in postes.items() %}
-                    <option value="{{ code }}">{{ nom }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div>
-            <label for="programme">Programme :</label>
-            <textarea id="programme" name="programme" rows="5" required></textarea>
-        </div>
-        <button type="submit">Soumettre la candidature</button>
-    </form>
+<h2>Poser sa candidature</h2>
+<!-- TODO: Modifier ce formulaire pour le mettre dans un cadre de largeur fixe t le centrer -->
+<form method="POST" action="{{ url_for('templates.candidature') }}" class="jumbotron">
+    
+    <div>
+        <label for="matricule">Matricule :</label>
+        <input type="text" id="matricule" name="matricule" required>
+    </div>
+    <div>
+        <label for="nom">Nom complet :</label>
+        <input type="text" id="nom" name="nom" required>
+    </div>
+    <div>
+        <label for="poste">Poste :</label>
+        <select id="poste" name="poste" required>
+            {% for code, nom in postes.items() %}
+            <option value="{{ code }}">{{ nom }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <!-- TODO: rajouter du js pour auto hide ce textarea lorsque le poste choisi n'est pas president -->
+    <div id="div-programme">
+        <label for="programme">Programme :</label>
+        
+        <textarea id="programme" name="programme" rows="5" required="true"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Soumettre la candidature</button>
+</form>
 {% endblock %}

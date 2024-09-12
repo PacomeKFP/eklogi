@@ -10,7 +10,7 @@ header {
     background-color: #4a69bd;
     color: white;
     text-align: center;
-    padding: 1rem;
+    padding: .5rem;
 }
 
 nav ul {
@@ -29,26 +29,53 @@ nav ul li a {
 
 main {
     padding: 20px;
+    width: 40%;
+    max-width: 720px;
+    min-width: 360px;
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+}
+
+main ul li a{
+    text-decoration: none !important;
+}
+
+
+.hidden{
+    visibility: hidden;
+}
+
+.height-0{
+    height: 0;
 }
 
 .alert {
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid transparent;
-    border-radius: 4px;
+    padding: 10px !important;
+    margin-bottom: 15px !important;
+    border: 1px solid transparent !important;
+    border-radius: 4px !important;
+    display: flex;
+    justify-content: space-between;
+}
+
+.alert i.fa:hover{
+    cursor: pointer;
+    font-weight: bold;
 }
 
 .alert-success {
-    color: #155724;
-    background-color: #d4edda;
-    border-color: #c3e6cb;
+    color: #155724 !important;
+    background-color: #d4edda !important;
+    border-color: #c3e6cb !important;
 }
 
 .alert-error {
-    color: #721c24;
-    background-color: #f8d7da;
-    border-color: #f5c6cb;
+    color: #721c24 !important;
+    background-color: #f8d7da !important;
+    border-color: #f5c6cb !important;
 }
+
 
 form div {
     margin-bottom: 15px;
