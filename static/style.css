@@ -70,6 +70,17 @@ main ul li a{
     border-color: #c3e6cb !important;
 }
 
+.alert-warning {
+    color: #574d15 !important;
+    background-color: #edead4 !important;
+    border-color: #e6e1c3 !important;
+}
+
+.alert-success {
+    color: #153757 !important;
+    background-color: #d4edda !important;
+    border-color: #c3e6cb !important;
+}
 .alert-error {
     color: #721c24 !important;
     background-color: #f8d7da !important;

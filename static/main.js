@@ -2,7 +2,7 @@
 const close_alert_icon = document.querySelector("div.alert i.fa");
 if (close_alert_icon)
   close_alert_icon.addEventListener("click", (e) =>
-    document.querySelector("div.alert").remove()
+    document.querySelectorAll("div.alert").forEach((e) => e.remove())
   );
 
 // Pour la page de candiature
@@ -17,12 +17,10 @@ poste_element?.addEventListener("change", (e) => {
   console.log(value);
 
   if (value === "president") {
-    programme_element.classList.remove("hidden");
-    programme_element.classList.remove("height-0");
+    programme_element.classList.remove("hidden", "height-0");
     programme_textarea_element.setAttribute("required", "true");
   } else {
-    programme_element.classList.add("hidden");
-    programme_element.classList.add("height-0");
+    programme_element.classList.add("hidden", "height-0");
     programme_textarea_element.removeAttribute("required");
   }
 });

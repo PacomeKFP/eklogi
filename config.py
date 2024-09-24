@@ -1,3 +1,5 @@
+from datetime import datetime, date
+
 # Configuration des postes disponibles
 POSTES = {
     'president': 'Président(e)',
@@ -17,26 +19,20 @@ MATRICULES_VOTANTS = [
     '20210001', '20210002', '20210003', '20210004', '20210005',
     '20220001', '20220002', '20220003', '20220004', '20220005'
 ]
-
-# Types de matricules autorisés par poste (exemple)
-MATRICULES_PAR_POSTE = {
-    'president': ['21', '20'],  # Matricules commençant par 2021 ou 2022
-    'president_adjoint': ['21', '20'],
-    'secretaire': ['21', '20'],
-    'secretaire_adjoint': ['21', '20'],
-    'tresorier': ['21', '20'],
-    'tresorier_adjoint': ['21', '20'],
-    'chef_cellule_projet': ['21', '20'],
-    'adjoint_cellule_projet': ['21', '20'],
-    'chef_cellule_communication': ['21', '20'],
-    'adjoint_cellule_communication': ['21', '20'],
+PHASES = {
+    "candidatures": (datetime(2024, 9, 25, 0, 0, 0, 1), datetime(2024, 10, 9, 14, 30, 0, 1)), 
+    "votes": (datetime(2024, 10, 9, 14, 30, 0, 2), datetime(2024, 10, 9, 15, 30, 0, 1)), 
 }
+def get_phase(date: date):
+    if date <= PHASES['candidatures'][0]:
+        return 0 # Pas encore lancé
+    if PHASES['candidatures'][0] <= date <= PHASES['candidatures'][1]:
+        return 1 # phase de candidature
+    if PHASES['votes'][0] <= date <= PHASES['votes'][1]:
+        return 2 # Phase de votes
 
-PHASES = [
-    1, # Phase de candidature
-    2, # Phase des elections se decline en autant d'etapes qu'il y a de postes
-    3  # Phase de Consultation des resultats, une fois la phase 2 terminée 
-]
+    return 3     # Phase de resultats
+
 
 # TODO: changer les matricules par les matricules réels
 MATRICULES_3GI= [f"22P{'%03d'%i}" for i in range(600)]

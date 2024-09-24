@@ -1,6 +1,7 @@
 import hashlib
 import config
 import logging
+from flask import flash
 
 _logger = logging.getLogger(__name__)
 
@@ -10,21 +11,15 @@ from models import Candidature
 def hash(string:str):
     return hashlib.sha256(string.encode()).hexdigest()
 
-def validate_matricule(matricule, poste):
-
-
-    if not poste and matricule not in config.MATRICULES_VOTANTS:
-        return False
-    
-    prefix = matricule[:2]  # Les 4 premiers chiffres du matricule
-    return prefix in config.MATRICULES_PAR_POSTE.get(poste, [])
 
 def valider_matricule_candidat(matricule, poste):
     # il faut etre dans la liste des matricules de 4GI ()
     if "adjoint" in poste and matricule not in config.MATRICULES_3GI:
+        flash("Seuls les etudiants de 3eme année peuvent postuler au poste d'adjoint ou vice", "info")
         return False
     
     if matricule not in config.MATRICULES_4GI:
+        flash("Seuls les etudiant de 4eme année peuvent postuler aux postes de Chef ou Président")
         return False
     
     # TODO: s'assurer que le candidat n'a pas encore gagné les elections d'un autre truc

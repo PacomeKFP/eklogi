@@ -1,15 +1,18 @@
-from flask import render_template, request, redirect, url_for, flash, Blueprint
+from flask import render_template, request, redirect, url_for, flash, Blueprint, jsonify
 from models import db, Candidature, Vote
 # from __main__ import app
 import config
 from utils import hash, valider_matricule_candidat, valider_matricule_votant
 
+from datetime import timedelta
+import json
 
 router = Blueprint("templates",__name__)
 
 @router.route('/')
 def home():
     return render_template('home.html', postes=config.POSTES)
+
 
 @router.route('/candidature', methods=['GET', 'POST'])
 def candidature():
@@ -27,8 +30,8 @@ def candidature():
 
         candidature_existante = Candidature.query.filter_by(matricule=matricule, poste=poste).first() 
         if candidature_existante:
-            flash("Ce matricule a déjà deposé une candidature pour ce poste.", 'error')
-            return redirect(url_for('templates.candidature'))
+            flash("Ce matricule a déjà deposé une candidature pour ce poste.", 'info')
+            return redirect(url_for('templates.home'))
 
         nouvelle_candidature = Candidature(matricule=matricule, poste=poste, nom=nom, programme=programme)
         db.session.add(nouvelle_candidature)
@@ -56,7 +59,7 @@ def vote(poste):
         matricule_vote_existant = Vote.query.filter_by(poste=poste, matricule_hash=matricule_hash).first()
 
         if ip_vote_existant or matricule_vote_existant:
-            flash("Vous avez déjà voté pour ce poste.\n Si vous continuez, on risque vous ban !", 'error')
+            flash("Vous avez déjà voté pour ce poste.\n Si vous continuez, on risque vous bann !", 'warning')
         else:
             nouveau_vote = Vote(poste=poste, candidat_id=candidat_id, ip_hash=ip_hash, matricule_hash=matricule_hash)
             db.session.add(nouveau_vote)
