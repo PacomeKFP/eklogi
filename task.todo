@@ -1,4 +1,6 @@
 [ ] TODO: lister les matricules des etudiants de 3 et 4GI
+    [x] 3GI
+    [ ] 4GI
     cela permettra de definir qui peut voter et qui peut candidater
     On peut demander aux délégués, et donner en TAF aux 3GI l'extraction
 
@@ -16,3 +18,5 @@
 
     V2
 [ ] TODO: Changer l'acceuil pour y mettre la liste des elections disponibles, avec un filtre
+
+[ ] Migration de la base de donnée vers MySQL

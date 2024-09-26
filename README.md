@@ -45,9 +45,7 @@ L'application est construite en utilisant le framework Flask en Python, avec une
 
 1. Cloner le dépôt du projet.
 2. Installer les dépendances : `pip install -r requirements.txt`
-3. Configurer les variables d'environnement si nécessaire.
-4. Initialiser la base de données : `flask db upgrade`
-5. Lancer l'application : `python app.py`
+3. Lancer l'application : `python app.py`
 
 ## 4. Maintenance et Évolution
 
