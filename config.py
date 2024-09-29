@@ -20,6 +20,8 @@ POSTES = {
     'adjoint_cellule_relation_exterieures': "Chef(fe) Cellule Relations Exterieures",
 }
 
+UPLOAD_FOLDER="uploads"
+
 # Matricules autorisés à voter (exemple)
 MATRICULES_VOTANTS = [
     '20210001', '20210002', '20210003', '20210004', '20210005',

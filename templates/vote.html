@@ -3,28 +3,63 @@
 {% block title %}Voter pour {{ poste_texte }} - Élections du Club{% endblock %}
 
 {% block content %}
-    <h2>Voter pour le poste de {{ poste_texte }}</h2>
-    {% if candidats %}
-        <form method="POST" action="{{ url_for('templates.vote', poste=poste) }}">
-            <div>
-                <label for="matricule">Votre matricule :</label>
-                <input type="text" id="matricule" name="matricule" required>
-            </div>
-            <h3>Choisissez votre candidat :</h3>
-            {% for candidat in candidats %}
-                <div>
-                    <input type="radio" id="candidat_{{ candidat.id }}" name="candidat_id" value="{{ candidat.id }}" required>
-                    <label for="candidat_{{ candidat.id }}">{{ candidat.nom }}</label>
-                    <!-- TODO: rajouter un boutton ici pour voir le programme, 
-                     lorsqu'on clique dessus, ça ouvre un popup/canvas qui affiche le programme du candidat -->
-                    {% if poste == 'president'%}
-                        <p>Programme : {{ candidat.programme }}</p>
+<h2>Voter pour le poste de {{ poste_texte }}</h2>
+{% if candidats %}
+<form method="POST" action="{{ url_for('templates.vote', poste=poste) }}" class="container">
+    <!-- Matricule -->
+    <div class="form-row mb-4">
+        <label for="matricule" class="col-md-2 col-form-label">Votre matricule :</label>
+        <div class="col-md-10">
+            <input type="text" class="form-control" id="matricule" name="matricule" required>
+        </div>
+    </div>
+
+    <h3 class="mb-4">Choisissez votre candidat :</h3>
+
+    <!-- Cartes pour chaque candidat -->
+    <div class="row">
+        {% for candidat in candidats %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        {% if candidat.photo %}
+                        <img src="{{ url_for('static', filename=candidat.photo) }}" alt="{{ candidat.nom }}"
+                            class="img-fluid rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                        {% else %}
+                        <i class="fas fa-user-circle fa-3x text-primary"></i>
+                        {% endif %}
+                    </div>
+                    <!-- Radio button -->
+                    <input type="radio" id="candidat_{{ candidat.id }}" name="candidat_id" value="{{ candidat.id }}"
+                        required>
+                    <label for="candidat_{{ candidat.id }}">
+                        <h4 class="card-title mt-2">{{ candidat.nom }}</h4>
+                    </label>
+                    {% if poste == 'president' %}
+                    {% if candidat.programme %}
+                    <a href="{{ url_for('static', filename=candidat.programme) }}" class="btn btn-outline-info btn-sm"
+                        download>
+                        Télécharger le programme <i class="fas fa-download ml-1"></i>
+                    </a>
+                    {% else %}
+                    <p class="text-muted">Programme non disponible</p>
+                    {% endif %}
+                    {% else %}
+                    <p class="card-text">{{ candidat.description | truncate(100) }}</p>
                     {% endif %}
                 </div>
-            {% endfor %}
-            <button type="submit" class="btn btn-primary">Voter</button>
-        </form>
-    {% else %}
-        <p>Aucun candidat n'est actuellement enregistré pour ce poste.</p>
-    {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Bouton de soumission -->
+    <div class="text-center mt-4">
+        <button type="submit" class="btn btn-primary">Voter</button>
+    </div>
+</form>
+{% else %}
+<p>Aucun candidat n'est actuellement enregistré pour ce poste.</p>
+{% endif %}
 {% endblock %}

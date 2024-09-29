@@ -5,30 +5,96 @@
 {% block content %}
 <h2>Poser sa candidature</h2>
 <!-- TODO: Modifier ce formulaire pour le mettre dans un cadre de largeur fixe t le centrer -->
-<form method="POST" action="{{ url_for('templates.candidature') }}" class="jumbotron">
-    
-    <div>
-        <label for="matricule">Matricule :</label>
-        <input type="text" id="matricule" name="matricule" required>
+<form method="POST" action="{{ url_for('templates.candidature') }}" enctype="multipart/form-data" class="jumbotron">
+
+    <!-- Matricule et nom sur la même ligne -->
+    <div class="form-row row">
+        <div class="form-group col-md-3">
+            <label for="matricule">Matricule :</label>
+            <input type="text" class="form-control" id="matricule" name="matricule" required>
+        </div>
+        <div class="form-group col-md-9">
+            <label for="nom">Nom complet :</label>
+            <input type="text" class="form-control" id="nom" name="nom" required>
+        </div>
     </div>
-    <div>
-        <label for="nom">Nom complet :</label>
-        <input type="text" id="nom" name="nom" required>
+
+    <!-- Téléchargement de la photo de profil -->
+    <div class="form-group mb-4">
+        <label for="photo">Photo de profil :</label>
+        <input type="file" id="photo" name="photo" accept="image/*" class="form-control-file" required onchange="previewImage(event)">
+        
+        <!-- Aperçu de la photo de profil -->
+        <div class="mt-3">
+            <img id="photoPreview" src="#" alt="Aperçu de la photo de profil" class="img-fluid img-thumbnail" style="display: none; max-width: 200px;">
+        </div>
     </div>
-    <div>
+
+    <!-- Poste à pourvoir, sans filtrage basé sur le matricule -->
+    <div class="form-group">
         <label for="poste">Poste :</label>
-        <select id="poste" name="poste" required>
+        <select id="poste" name="poste" class="form-control" required>
+            <option value="" disabled selected>Choisir un poste</option>
             {% for code, nom in postes.items() %}
             <option value="{{ code }}">{{ nom }}</option>
             {% endfor %}
         </select>
     </div>
-    <!-- TODO: rajouter du js pour auto hide ce textarea lorsque le poste choisi n'est pas president -->
-    <div id="div-programme">
-        <label for="programme">Programme :</label>
-        
-        <textarea id="programme" name="programme" rows="5" required="true"></textarea>
+
+    <!-- Champ caché pour le programme, seulement pour les présidents -->
+    <div id="programme-container" class="form-group" style="display: none;">
+        <label for="programme">Plan d'action (PDF) :</label>
+        <input type="file" class="form-control-file" id="programme" name="programme" accept=".pdf">
     </div>
+
+    <!-- Champ descriptif pour les autres postes -->
+    <div id="description-container" class="form-group" style="display: none;">
+        <label for="description">Description :</label>
+        <textarea id="description" name="description" class="form-control" rows="3"
+            placeholder="Décrivez votre vision pour ce poste."></textarea>
+    </div>
+
+    <!-- Bouton de soumission -->
     <button type="submit" class="btn btn-primary">Soumettre la candidature</button>
+
 </form>
+
+<script>
+    const posteSelect = document.getElementById('poste');
+    const programmeContainer = document.getElementById('programme-container');
+    const descriptionContainer = document.getElementById('description-container');
+
+
+    function previewImage(event) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            const output = document.getElementById('photoPreview');
+            output.src = reader.result;
+            output.style.display = 'block';
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    // Fonction pour gérer les champs à afficher selon le poste choisi
+    function gererChamps() {
+        const poste = posteSelect.value;
+
+        // Si le poste est "Président"
+        if (poste === 'president') {
+            programmeContainer.style.display = 'block';
+            descriptionContainer.style.display = 'none';
+            document.getElementById('programme').required = true;
+            document.getElementById('description').required = false;
+        } else {
+            programmeContainer.style.display = 'none';
+            descriptionContainer.style.display = 'block';
+            document.getElementById('programme').required = false;
+            document.getElementById('description').required = true;
+        }
+    }
+
+    // Écouteur d'événement pour gérer les champs en fonction du poste
+    posteSelect.addEventListener('change', gererChamps);
+</script>
+
 {% endblock %}

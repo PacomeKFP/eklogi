@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, send_from_directory
 from models import db
 import config
 from routes import router
@@ -15,6 +15,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = config.DATABASE_URI
 app.config['SECRET_KEY'] = config.SECRET_KEY
 db.init_app(app)
 
+UPLOAD_FOLDER = 'uploads'
+
+@app.route('/uploads/<path:filename>')
+def uploaded_file(filename):
+    return send_from_directory(UPLOAD_FOLDER, filename)
 
 
 with app.app_context():
