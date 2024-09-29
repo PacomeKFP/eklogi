@@ -42,10 +42,11 @@ L'application est construite en utilisant le framework Flask en Python, avec une
 - Validation des matricules pour l'autorisation des candidatures et des votes.
 
 ## 3. Guide de Déploiement
-
+0. Assurez vous d'avoir MySQL d'installé
 1. Cloner le dépôt du projet.
 2. Installer les dépendances : `pip install -r requirements.txt`
-3. Lancer l'application : `python app.py`
+3. Modifiez la variable `DATABASE_URI` du fichier config pour configuerer l'access à la base de donnée
+4. Lancer l'application : `python app.py`
 
 ## 4. Maintenance et Évolution
 
