@@ -11,7 +11,7 @@ router = Blueprint("templates",__name__)
 
 @router.route('/')
 def home():
-    return render_template('home.html', postes=config.POSTES)
+    return render_template('home.html', postes=config.POSTES, POSTES=config.POSTES)
 
 
 @router.route('/candidature', methods=['GET', 'POST'])
@@ -70,3 +70,10 @@ def vote(poste):
 
     candidats = Candidature.query.filter_by(poste=poste).all()
     return render_template('vote.html', poste=poste, poste_texte=config.POSTES[poste], candidats=candidats)
+
+
+@router.route('/resultats', methods=['GET'])
+def resultats():
+
+
+    return render_template("resultats.html")

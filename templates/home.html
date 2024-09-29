@@ -3,16 +3,100 @@
 {% block title %}Accueil - Élections du Club{% endblock %}
 
 {% block content %}
-    <h2>Bienvenue aux élections du club</h2>
-    <p>Choisissez une action :</p>
-    <ul>
-        <li><a href="{{ url_for('templates.candidature') }}">Poser votre candidature</a></li>
-    </ul>
+<h2>Bienvenue aux élections du club</h2>
 
-    <h3>Postes à pourvoir :</h3>
-    <ul>
-        {% for code, nom in postes.items() %}
-            <li><a href="{{ url_for('templates.vote', poste=code) }}">Voter pour le poste de {{ nom }}</a></li>
-        {% endfor %}
-    </ul>
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <a href="{{ url_for('templates.candidature') }}">
+                <div class="card text-center shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="fas fa-user-plus fa-3x text-primary"></i>
+                        </div>
+                        <h4 class="card-title">Poser ma candidature</h4>
+                        <p class="card-text">Présentez-vous à un des postes du club, en fonction de votre classe.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Carte pour Voter avec déclenchement du modal -->
+        <div class="col-md-4">
+            <div class="card text-center shadow-sm h-100" data-bs-toggle="modal" data-bs-target="#modalPostes">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <i class="fas fa-vote-yea fa-3x text-success"></i>
+                    </div>
+                    <h4 class="card-title">Voter</h4>
+                    <p class="card-text">Exprimez votre choix pour chaque poste en allant au vote.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <a href="{{ url_for('templates.resultats') }}">
+                <div class="card text-center shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="fas fa-poll fa-3x text-info"></i>
+                        </div>
+                        <h4 class="card-title">Résultats</h4>
+                        <p class="card-text">Consultez les résultats des élections.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalPostes" tabindex="-1" aria-labelledby="modalPostesLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalPostesLabel">Postes à Pourvoir</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Colonne pour les postes principaux -->
+                    <div class="col-md-6">
+                        <h6 class="text-uppercase text-muted">Postes Principaux</h6>
+                        <ul class="list-group mb-3">
+                            <!-- Boucle pour afficher les postes principaux -->
+                            {% for code, poste in POSTES.items() if 'adjoint' not in code %}
+                            <a href="{{ url_for('templates.vote', poste=code) }}"
+                                class="list-group-item list-group-item-action">
+                                <h5 class="mb-1">{{ poste }}</h5>
+                                <small class="text-muted">Description rapide du poste {{ poste }}.</small>
+                            </a>
+                            {% endfor %}
+                        </ul>
+                    </div>
+            
+                    <!-- Colonne pour les postes adjoints -->
+                    <div class="col-md-6">
+                        <h6 class="text-uppercase text-muted">Postes Adjoints</h6>
+                        <ul class="list-group">
+                            <!-- Boucle pour afficher les postes adjoints -->
+                            {% for code, poste in POSTES.items() if 'adjoint' in code %}
+                            <a href="{{ url_for('templates.vote', poste=code) }}"
+                                class="list-group-item list-group-item-action">
+                                <h5 class="mb-1">{{ poste }}</h5>
+                                <small class="text-muted">Description rapide du poste {{ poste }}.</small>
+                            </a>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

@@ -6,15 +6,18 @@ DATABASE_URI = 'mysql://root:root_password@localhost:3306/eklogi'   # for MySQL
 # Configuration des postes disponibles
 POSTES = {
     'president': 'Président(e)',
-    'president_adjoint': 'Vice-président(e)',
     'secretaire': 'Secrétaire Général',
-    'secretaire_adjoint': 'Secrétaire Adjoint(e)',
     'tresorier': 'Trésorier(e)',
-    'tresorier_adjoint': "Trésorier(e) Adjoint(e)",
     'chef_cellule_projet': "Chef(fe) Cellule Projet",
-    'adjoint_cellule_projet': "Adjoint(e) Cellule Projet",
     'chef_cellule_communication': "Chef(fe) Cellule Communication",
+    'chef_cellule_relation_exterieures': "Chef(fe) Cellule Relations Exterieures",
+    
+    'president_adjoint': 'Vice-président(e)',
+    'secretaire_adjoint': 'Secrétaire Adjoint(e)',
+    'tresorier_adjoint': "Trésorier(e) Adjoint(e)",
+    'adjoint_cellule_projet': "Adjoint(e) Cellule Projet",
     'adjoint_cellule_communication': "Chef(fe) Cellule Communication",
+    'adjoint_cellule_relation_exterieures': "Chef(fe) Cellule Relations Exterieures",
 }
 
 # Matricules autorisés à voter (exemple)

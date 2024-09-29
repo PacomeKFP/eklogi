@@ -29,7 +29,7 @@ nav ul li a {
 
 main {
     padding: 20px;
-    width: 40%;
+    width: 80%;
     max-width: 720px;
     min-width: 360px;
     display: flex;
@@ -39,6 +39,28 @@ main {
 
 main ul li a{
     text-decoration: none !important;
+}
+
+a:hover{
+    text-decoration: none !important;
+}
+
+.card {
+    position: relative;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    cursor: pointer;
+    background-color: #ffeb7aa9;
 }
 
 
