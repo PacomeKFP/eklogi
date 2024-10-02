@@ -8,8 +8,8 @@
 <form method="POST" action="{{ url_for('templates.vote', poste=poste) }}" class="container">
     <!-- Matricule -->
     <div class="form-row mb-4">
-        <label for="matricule" class="col-md-2 col-form-label">Votre matricule :</label>
-        <div class="col-md-10">
+        <label for="matricule" class="col-md-3 col-form-label">Votre matricule :</label>
+        <div class="col-md-9">
             <input type="text" class="form-control" id="matricule" name="matricule" required>
         </div>
     </div>
@@ -19,27 +19,27 @@
     <!-- Cartes pour chaque candidat -->
     <div class="row">
         {% for candidat in candidats %}
-        <div class="col-md-4 mb-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body text-center">
+        <div class="col-md-4 mb-4" onClick="selectCandidate({{candidat.id}})">
+            <div class="card shadow-sm h-100"  id="card-{{candidat.id}}">
+                <div class="card-body text-center " >
                     <div class="mb-3">
                         {% if candidat.photo %}
-                        <img src="{{ url_for('static', filename=candidat.photo) }}" alt="{{ candidat.nom }}"
+                        <img src="{{ url_for('uploaded_file', filename=candidat.photo) }}" alt="{{ candidat.nom }}"
                             class="img-fluid rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
                         {% else %}
                         <i class="fas fa-user-circle fa-3x text-primary"></i>
                         {% endif %}
                     </div>
                     <!-- Radio button -->
-                    <input type="radio" id="candidat_{{ candidat.id }}" name="candidat_id" value="{{ candidat.id }}"
-                        required>
+                    <input type="radio" class="hidden" id="candidat_{{ candidat.id }}" name="candidat_id"
+                        value="{{ candidat.id }}" required>
                     <label for="candidat_{{ candidat.id }}">
                         <h4 class="card-title mt-2">{{ candidat.nom }}</h4>
                     </label>
                     {% if poste == 'president' %}
                     {% if candidat.programme %}
-                    <a href="{{ url_for('static', filename=candidat.programme) }}" class="btn btn-outline-info btn-sm"
-                        download>
+                    <a href="{{ url_for('uploaded_file', filename=candidat.programme) }}"
+                        class="btn btn-outline-info btn-sm" download>
                         Télécharger le programme <i class="fas fa-download ml-1"></i>
                     </a>
                     {% else %}
@@ -59,6 +59,25 @@
         <button type="submit" class="btn btn-primary">Voter</button>
     </div>
 </form>
+
+<script>
+    let selectedCandidateId = -1;
+    function selectCandidate(id) {
+        // selectionner la carte
+        const card = document.getElementById(`card-${id}`)
+        const oldCcard = document.getElementById(`card-${selectedCandidateId}`)
+        const input = document.getElementById(`candidat_${id}`)
+
+        if (selectedCandidateId !== id)
+            selectedCandidateId = id
+
+        input.checked = true
+
+        card.classList.toggle("selected-card")
+        oldCcard.classList.remove("selected-card")
+    }
+
+</script>
 {% else %}
 <p>Aucun candidat n'est actuellement enregistré pour ce poste.</p>
 {% endif %}

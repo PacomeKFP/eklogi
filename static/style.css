@@ -45,6 +45,11 @@ a:hover{
     text-decoration: none !important;
 }
 
+a{
+    text-decoration: none !important;
+}
+
+
 .card {
     position: relative;
     background-color: #fff;
@@ -60,7 +65,12 @@ a:hover{
 .card:hover {
     transform: translateY(-10px);
     cursor: pointer;
-    background-color: #ffeb7aa9;
+    background-color: #7ab8ff33;
+}
+
+.selected-card{
+    transform: translateY(-10px);
+    background-color: #7ab8ffa9 !important;
 }
 
 

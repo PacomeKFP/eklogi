@@ -1,13 +1,10 @@
+import os
 from flask import Flask, send_from_directory
 from models import db
 import config
 from routes import router
-from flask_env import MetaFlaskEnv
+import logging
 
-
-class Configuration(metaclass=MetaFlaskEnv):
-    DEBUG = False
-    PORT = 5000
 
 app = Flask(__name__)
 app.register_blueprint(router)
@@ -16,6 +13,7 @@ app.config['SECRET_KEY'] = config.SECRET_KEY
 db.init_app(app)
 
 UPLOAD_FOLDER = 'uploads'
+
 
 @app.route('/uploads/<path:filename>')
 def uploaded_file(filename):
@@ -26,4 +24,10 @@ with app.app_context():
     db.create_all()
 
 if __name__ == '__main__':
+    _logger = logging.Logger(__name__)
+
+    if not os.path.exists(UPLOAD_FOLDER):
+        _logger.warning("Directory for uploads not existing")
+        os.makedirs(UPLOAD_FOLDER)
+        _logger.info("Directory for uploads created")
     app.run(debug=True)

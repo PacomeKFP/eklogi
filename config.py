@@ -6,7 +6,7 @@ DATABASE_URI = 'mysql://root:root_password@localhost:3306/eklogi'   # for MySQL
 # Configuration des postes disponibles
 POSTES = {
     'president': 'Président(e)',
-    'secretaire': 'Secrétaire Général',
+    'secretaire': 'Secrétaire Général(e)',
     'tresorier': 'Trésorier(e)',
     'chef_cellule_projet': "Chef(fe) Cellule Projet",
     'chef_cellule_communication': "Chef(fe) Cellule Communication",

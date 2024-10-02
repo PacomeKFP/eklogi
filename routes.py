@@ -59,8 +59,8 @@ def candidature():
             return redirect(request.url)
         if photo and allowed_file(photo.filename):
             photo_filename = secure_filename(f"{matricule}_{photo.filename}")
-            photo_path = os.path.join(UPLOAD_FOLDER, 'photos', photo_filename)
-            photo.save(photo_path)
+            photo_save_path = os.path.join(UPLOAD_FOLDER, photo_filename)
+            photo.save(photo_save_path)
         else:
             flash('Format de fichier non autorisé pour la photo', 'error')
             return redirect(request.url)
@@ -77,11 +77,9 @@ def candidature():
                 flash('Aucun programme sélectionné', 'error')
                 return redirect(request.url)
             if programme and allowed_file(programme.filename):
-                programme_filename = secure_filename(
-                    f"{matricule}_{programme.filename}")
-                programme_path = os.path.join(
-                    UPLOAD_FOLDER, 'programmes', programme_filename)
-                programme.save(programme_path)
+                programme_filename = secure_filename(f"{matricule}_{programme.filename}")
+                programme_save_path = os.path.join(UPLOAD_FOLDER, programme_filename)
+                programme.save(programme_save_path)
             else:
                 flash('Format de fichier non autorisé pour le programme', 'error')
                 return redirect(request.url)
@@ -96,8 +94,8 @@ def candidature():
             matricule=matricule,
             poste=poste,
             nom=nom,
-            photo=photo_path,
-            programme=programme_path,
+            photo=photo_filename,
+            programme=programme_filename,
             description=description
         )
 
@@ -136,12 +134,12 @@ def vote(poste):
         ip_hash = hashlib.sha256(request.remote_addr.encode()).hexdigest()
         matricule_hash = hashlib.sha256(matricule.encode()).hexdigest()
 
-        ip_vote_existant = Vote.query.filter_by(poste=poste, ip_hash=ip_hash).first()
-        matricule_vote_existant = Vote.query.filter_by(poste=poste, matricule_hash=matricule_hash).first()
+        # ip_vote_existant = Vote.query.filter_by(poste=poste, ip_hash=ip_hash).first()
+        # matricule_vote_existant = Vote.query.filter_by(poste=poste, matricule_hash=matricule_hash).first()
 
-        if ip_vote_existant or matricule_vote_existant:
-            flash("Vous avez déjà voté pour ce poste. Si vous continuez, vous risquez d'être banni !", 'warning')
-            return redirect(url_for('templates.vote', poste=poste))
+        # if ip_vote_existant or matricule_vote_existant:
+        #     flash("Vous avez déjà voté pour ce poste. Si vous continuez, vous risquez d'être banni !", 'warning')
+        #     return redirect(url_for('templates.vote', poste=poste))
 
         try:
             nouveau_vote = Vote(poste=poste, candidat_id=candidat_id,
@@ -160,5 +158,16 @@ def vote(poste):
 
 @router.route('/resultats', methods=['GET'])
 def resultats():
+    resultats = dict()
+    for poste in POSTES.keys():
+        candidatures = Candidature.query.filter_by(poste=poste).all()
+        total_votes_number = Vote.query.filter_by(poste=poste).count() or 1
 
-    return render_template("resultats.html")
+        resultats[poste] = dict()
+        
+        for candidate in candidatures:
+            candidate_votes_number = Vote.query.filter_by(poste=poste, candidat_id=candidate.id).count()
+            pourcentage = round((candidate_votes_number * 100 / total_votes_number), 1)
+            resultats[poste][candidate.nom] = pourcentage
+        
+    return render_template("resultats.html", POSTES=POSTES, resultats=resultats)
