@@ -3,23 +3,23 @@
 {% block title %}Voter pour {{ poste_texte }} - Élections du Club{% endblock %}
 
 {% block content %}
-<h2>Voter pour le poste de {{ poste_texte }}</h2>
+<h2 class="text-start">Voter pour le poste de {{ poste_texte }}</h2>
 {% if candidats %}
 <form method="POST" action="{{ url_for('templates.vote', poste=poste) }}" class="container">
     <!-- Matricule -->
-    <div class="form-row mb-4">
-        <label for="matricule" class="col-md-3 col-form-label">Votre matricule :</label>
-        <div class="col-md-9">
+    <div class="form-row mb-4 text-start">
+        <label for="matricule" class="col-form-label text-start">Votre matricule</label>
+        <div class="col-md-12">
             <input type="text" class="form-control" id="matricule" name="matricule" required>
         </div>
     </div>
 
-    <h3 class="mb-4">Choisissez votre candidat :</h3>
+    <h4 class="mb-4 text-start">Choisissez votre candidat :</h4>
 
     <!-- Cartes pour chaque candidat -->
     <div class="row">
         {% for candidat in candidats %}
-        <div class="col-md-4 mb-4" onClick="selectCandidate({{candidat.id}})">
+        <div class="col-md-4 mb-4" onClick="selectCandidate('{{ candidat.id }}')">
             <div class="card shadow-sm h-100"  id="card-{{candidat.id}}">
                 <div class="card-body text-center " >
                     <div class="mb-3">

@@ -1,6 +1,7 @@
 from datetime import datetime, date
 
 DATABASE_URI = 'mysql://root:root_password@localhost:3306/eklogi'   # for MySQL
+# DATABASE_URI = 'sqlite:///elections.db' # for sqlite
 
 
 # Configuration des postes disponibles
@@ -47,7 +48,6 @@ MATRICULES_3GI= [f"22P{'%03d'%i}" for i in range(600)]
 MATRICULES_4GI= [f"21P{'%03d'%i}" for i in range(500)]
 
 # Configuration de la base de données
-# DATABASE_URI = 'sqlite:///elections.db' # for sqlite
 
 # Clé secrète pour la session Flask
 SECRET_KEY = 'votre_cle_secrete_ici'  # À changer en production !
