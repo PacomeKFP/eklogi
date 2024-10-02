@@ -66,7 +66,7 @@ def candidature():
             return redirect(request.url)
 
         # Gestion de l'upload du programme (pour les présidents) ou de la description
-        programme_path = None
+        programme_filename = None
         description = None
         if poste == 'president':
             if 'programme' not in request.files:

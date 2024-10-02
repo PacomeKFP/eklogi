@@ -17,8 +17,8 @@ POSTES = {
     'secretaire_adjoint': 'Secrétaire Adjoint(e)',
     'tresorier_adjoint': "Trésorier(e) Adjoint(e)",
     'adjoint_cellule_projet': "Adjoint(e) Cellule Projet",
-    'adjoint_cellule_communication': "Chef(fe) Cellule Communication",
-    'adjoint_cellule_relation_exterieures': "Chef(fe) Cellule Relations Exterieures",
+    'adjoint_cellule_communication': "Adjoint(e) Cellule Communication",
+    'adjoint_cellule_relation_exterieures': "Adjoint(e) Cellule Relations Exterieures",
 }
 
 UPLOAD_FOLDER="uploads"
