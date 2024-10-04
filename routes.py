@@ -29,7 +29,7 @@ def allowed_file(filename):
 @router.route('/candidature', methods=['GET', 'POST'])
 def candidature():
     if request.method == 'POST':
-        matricule = request.form.get('matricule')
+        matricule = request.form.get('matricule').upper()
         poste = request.form.get('poste')
         nom = request.form.get('nom')
 
@@ -42,12 +42,26 @@ def candidature():
             flash("Votre matricule n'est pas autorisé pour ce poste.", 'error')
             return redirect(url_for('templates.candidature'))
 
-        # Vérification de l'existence d'une candidature
-        candidature_existante = Candidature.query.filter_by(
-            matricule=matricule, poste=poste).first()
-        if candidature_existante:
-            flash("Ce matricule a déjà déposé une candidature pour ce poste.", 'info')
-            return redirect(url_for('templates.home'))
+        # # Vérification de l'existence d'une candidature
+        # candidature_existante = Candidature.query.filter_by(
+        #     matricule=matricule, poste=poste).first()
+        # if candidature_existante:
+        #     flash("Ce matricule a déjà déposé une candidature pour ce poste.", 'info')
+        #     return redirect(url_for('templates.home'))
+
+        # FIX: Corrige l'erreur de double postulation
+        candidatures = Candidature.query.filter_by(matricule=matricule).all()
+        for candidature in candidatures:
+            if candidature.poste == poste:
+                # candidature existante
+                flash(
+                    "Ce matricule a déjà déposé une candidature pour ce poste.", 'info')
+                return redirect(url_for('templates.home'))
+
+            if candidature.nom == nom:
+                flash(
+                    f"Le nom {candidature.nom} a été detecté pour ce matricule, il sera utilisé", 'info')
+                return redirect(url_for('templates.home'))
 
         # Gestion de l'upload de la photo
         if 'photo' not in request.files:
@@ -77,8 +91,10 @@ def candidature():
                 flash('Aucun programme sélectionné', 'error')
                 return redirect(request.url)
             if programme and allowed_file(programme.filename):
-                programme_filename = secure_filename(f"{matricule}_{programme.filename}")
-                programme_save_path = os.path.join(UPLOAD_FOLDER, programme_filename)
+                programme_filename = secure_filename(
+                    f"{matricule}_{programme.filename}")
+                programme_save_path = os.path.join(
+                    UPLOAD_FOLDER, programme_filename)
                 programme.save(programme_save_path)
             else:
                 flash('Format de fichier non autorisé pour le programme', 'error')
@@ -120,7 +136,7 @@ def vote(poste):
         return redirect(url_for('templates.home'))
 
     if request.method == 'POST':
-        matricule = request.form.get('matricule')
+        matricule = request.form.get('matricule').upper()
         candidat_id = request.form.get('candidat_id')
 
         if not matricule or not candidat_id:
@@ -131,7 +147,7 @@ def vote(poste):
             flash("Vous n'êtes pas autorisé à voter pour ce poste.", 'error')
             return redirect(url_for('templates.vote', poste=poste))
 
-        ip_hash = hashlib.sha256(request.remote_addr.encode()).hexdigest()
+        # ip_hash = hashlib.sha256(request.remote_addr.encode()).hexdigest()
         matricule_hash = hashlib.sha256(matricule.encode()).hexdigest()
 
         # ip_vote_existant = Vote.query.filter_by(poste=poste, ip_hash=ip_hash).first()
@@ -141,20 +157,28 @@ def vote(poste):
         #     flash("Vous avez déjà voté pour ce poste. Si vous continuez, vous risquez d'être banni !", 'warning')
         #     return redirect(url_for('templates.vote', poste=poste))
 
+        # [FIX]: empecher un candidat de voter
+        candidat = Candidature.query.filter_by(id=candidat_id).first()
+        if matricule == candidat.matricule:
+            flash("Vous avez postulé, donc ne pouvez pas voter.", 'error')
+            return redirect(url_for('templates.vote', poste=poste))
+
         try:
-            nouveau_vote = Vote(poste=poste, candidat_id=candidat_id,
-                                ip_hash=ip_hash, matricule_hash=matricule_hash)
+            nouveau_vote = Vote(
+                poste=poste, candidat_id=candidat_id, matricule_hash=matricule_hash)
             db.session.add(nouveau_vote)
             db.session.commit()
             flash('Votre vote a été enregistré avec succès!', 'success')
         except Exception as e:
             db.session.rollback()
-            flash(f"Une erreur est survenue lors de l'enregistrement de votre vote : {str(e)}", 'error')
+            flash(
+                f"Une erreur est survenue lors de l'enregistrement de votre vote : {str(e)}", 'error')
 
         return redirect(url_for('templates.home'))
 
     candidats = Candidature.query.filter_by(poste=poste).all()
     return render_template('vote.html', poste=poste, poste_texte=config.POSTES[poste], candidats=candidats)
+
 
 @router.route('/resultats', methods=['GET'])
 def resultats():
@@ -164,10 +188,12 @@ def resultats():
         total_votes_number = Vote.query.filter_by(poste=poste).count() or 1
 
         resultats[poste] = dict()
-        
+
         for candidate in candidatures:
-            candidate_votes_number = Vote.query.filter_by(poste=poste, candidat_id=candidate.id).count()
-            pourcentage = round((candidate_votes_number * 100 / total_votes_number), 1)
+            candidate_votes_number = Vote.query.filter_by(
+                poste=poste, candidat_id=candidate.id).count()
+            pourcentage = round(
+                (candidate_votes_number * 100 / total_votes_number), 1)
             resultats[poste][candidate.nom] = pourcentage
-        
+
     return render_template("resultats.html", POSTES=POSTES, resultats=resultats)

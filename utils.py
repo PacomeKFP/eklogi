@@ -14,11 +14,11 @@ def hash(string:str):
 
 def valider_matricule_candidat(matricule, poste):
     # il faut etre dans la liste des matricules de 4GI ()
-    if "adjoint" in poste and matricule not in config.MATRICULES_3GI:
+    if ("adjoint" in poste) and (matricule not in config.MATRICULES_3GI):
         flash("Seuls les etudiants de 3eme année peuvent postuler au poste d'adjoint ou vice", "info")
         return False
     
-    if matricule not in config.MATRICULES_4GI:
+    elif "adjoint" not in poste and matricule not in config.MATRICULES_4GI:
         flash("Seuls les etudiant de 4eme année peuvent postuler aux postes de Chef ou Président")
         return False
     

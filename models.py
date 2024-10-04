@@ -17,6 +17,6 @@ class Vote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     poste = db.Column(db.String(50), nullable=False)
     candidat_id = db.Column(db.Integer, db.ForeignKey('candidature.id'), nullable=False)
-    ip_hash = db.Column(db.String(64), nullable=False)
+    ip_hash = db.Column(db.String(64), nullable=True)
     matricule_hash = db.Column(db.String(64), nullable=False)
 
