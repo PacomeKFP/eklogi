@@ -13,6 +13,12 @@ def hash(string:str):
 
 
 def valider_matricule_candidat(matricule, poste):
+    # il doit etre soit un 4GI soit un 3GI
+    if matricule not in [*config.MATRICULES_3GI, *config.MATRICULES_4GI]:
+        flash("Votre matricule ne correspond pas à celui d'un etudiant de 3eme ou de 4eme année du GI", "info")
+        return False
+
+
     # il faut etre dans la liste des matricules de 4GI ()
     if ("adjoint" in poste) and (matricule not in config.MATRICULES_3GI):
         flash("Seuls les etudiants de 3eme année peuvent postuler au poste d'adjoint ou vice", "info")
