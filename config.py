@@ -40,7 +40,7 @@ PHASES = {
 
 
 def get_phase(current_date: datetime):
-    current_date = cameroun_tz.localize(current_date)  # Assure que la date est dans le fuseau horaire Cameroun
+    current_date = cameroun_tz.fromutc(current_date)  # Assure que la date est dans le fuseau horaire Cameroun
 
     if current_date <= PHASES['candidatures'][0]:
         return 0  # Pas encore lancé
