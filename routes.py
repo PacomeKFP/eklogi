@@ -35,7 +35,7 @@ def candidature():
     now = datetime.now()
     phase = get_phase(now)
     if request.method == 'POST':
-        matricule = request.form.get('matricule').upper().split()
+        matricule = request.form.get('matricule').upper().strip()
         poste = request.form.get('poste')
         nom = request.form.get('nom')
 
@@ -144,7 +144,7 @@ def vote(poste):
         return redirect(url_for('templates.home'))
 
     if request.method == 'POST':
-        matricule = request.form.get('matricule').upper().split()
+        matricule = request.form.get('matricule').upper().strip()
         candidat_id = request.form.get('candidat_id')
 
         if not matricule or not candidat_id:
@@ -158,17 +158,16 @@ def vote(poste):
         # ip_hash = hashlib.sha256(request.remote_addr.encode()).hexdigest()
         matricule_hash = hashlib.sha256(matricule.encode()).hexdigest()
 
-        # ip_vote_existant = Vote.query.filter_by(poste=poste, ip_hash=ip_hash).first()
-        # matricule_vote_existant = Vote.query.filter_by(poste=poste, matricule_hash=matricule_hash).first()
+        matricule_vote_existant = Vote.query.filter_by(poste=poste, matricule_hash=matricule_hash).first()
 
-        # if ip_vote_existant or matricule_vote_existant:
-        #     flash("Vous avez déjà voté pour ce poste. Si vous continuez, vous risquez d'être banni !", 'warning')
-        #     return redirect(url_for('templates.vote', poste=poste))
+        if  matricule_vote_existant:
+            flash("Vous avez déjà voté pour ce poste. Si vous continuez, vous risquez d'être banni !", 'warning')
+            return redirect(url_for('templates.vote', poste=poste))
 
         # [FIX]: empecher un candidat de voter
         candidat = Candidature.query.filter_by(id=candidat_id).first()
         if matricule == candidat.matricule:
-            flash("Vous avez postulé, donc ne pouvez pas voter.", 'error')
+            flash("Vous avez déposé une candidature pour ce poste, donc ne pouvez pas voter pour ce poste.", 'error')
             return redirect(url_for('templates.vote', poste=poste))
 
         try:

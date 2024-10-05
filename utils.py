@@ -13,6 +13,7 @@ def hash(string:str):
 
 
 def valider_matricule_candidat(matricule, poste):
+    print(matricule)
     # il doit etre soit un 4GI soit un 3GI
     if matricule not in [*config.MATRICULES_3GI, *config.MATRICULES_4GI]:
         flash("Votre matricule ne correspond pas à celui d'un etudiant de 3eme ou de 4eme année du GI", "info")
@@ -25,7 +26,7 @@ def valider_matricule_candidat(matricule, poste):
         return False
     
     elif "adjoint" not in poste and matricule not in config.MATRICULES_4GI:
-        flash("Seuls les etudiant de 4eme année peuvent postuler aux postes de Chef ou Président")
+        flash("Seuls les etudiant de 4eme année peuvent postuler aux postes de Chef ou Président", "info")
         return False
     
     # TODO: s'assurer que le candidat n'a pas encore gagné les elections d'un autre truc
@@ -37,13 +38,14 @@ def valider_matricule_votant(matricule, poste):
 
     candidature_existante = Candidature.query.filter_by(poste=poste, matricule=matricule).first()
     if candidature_existante:
-        _logger.warning("Il est candidat")
+        flash("Vous etes candidat à ce poste, donc vous ne pouvez pas voter pour le poste", "info")
         return False
 
+    print(matricule)
 
     # il doit etre soit un 4GI soit un 3GI
     if matricule not in [*config.MATRICULES_3GI, *config.MATRICULES_4GI]:
-        _logger.warning("Probleme de matricule")
+        flash("Il semblerait que votre matricule ne soit pas celui d'un étudiant de 3eme ou 4eme année GI", "info")
         return False
     
     return True
