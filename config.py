@@ -38,20 +38,18 @@ PHASES = {
     ),
 }
 
+
 def get_phase(current_date: datetime):
-    return 1
+    current_date = cameroun_tz.localize(current_date)  # Assure que la date est dans le fuseau horaire Cameroun
 
-# def get_phase(current_date: datetime):
-#     current_date = cameroun_tz.localize(current_date)  # Assure que la date est dans le fuseau horaire Cameroun
+    if current_date <= PHASES['candidatures'][0]:
+        return 0  # Pas encore lancé
+    if PHASES['candidatures'][0] <= current_date <= PHASES['candidatures'][1]:
+        return 1  # phase de candidature
+    if PHASES['votes'][0] <= current_date <= PHASES['votes'][1]:
+        return 2  # Phase de votes
 
-#     if current_date <= PHASES['candidatures'][0]:
-#         return 0  # Pas encore lancé
-#     if PHASES['candidatures'][0] <= current_date <= PHASES['candidatures'][1]:
-#         return 1  # phase de candidature
-#     if PHASES['votes'][0] <= current_date <= PHASES['votes'][1]:
-#         return 2  # Phase de votes
-
-#     return 3  # Phase de résultats
+    return 3  # Phase de résultats
 
 
 
