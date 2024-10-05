@@ -7,8 +7,14 @@
 
 <div class="container py-5">
     <div class="row g-4">
+
+        <!-- Carte pour Candidature -->
         <div class="col-md-4">
-            <a href="{{ url_for('templates.candidature') }}">
+            {% if phase == 1 %}
+                <a href="{{ url_for('templates.candidature') }}">
+            {% else %}
+                <a href="javascript:void(0);" style="cursor: not-allowed !important;" onclick="alert('La phase de candidatures n\'est pas active.')" style="cursor: not-allowed;">
+            {% endif %}
                 <div class="card text-center shadow-sm h-100">
                     <div class="card-body">
                         <div class="mb-3">
@@ -20,10 +26,14 @@
                 </div>
             </a>
         </div>
-
-        <!-- Carte pour Voter avec déclenchement du modal -->
+    
+        <!-- Carte pour Voter -->
         <div class="col-md-4">
-            <div class="card text-center shadow-sm h-100" data-bs-toggle="modal" data-bs-target="#modalPostes">
+            {% if phase == 2 %}
+                <div class="card text-center shadow-sm h-100" data-bs-toggle="modal" data-bs-target="#modalPostes">
+            {% else %}
+                <div class="card text-center shadow-sm h-100" style="cursor: not-allowed !important;" onclick="alert('La phase de votes n\'est pas active.')">
+            {% endif %}
                 <div class="card-body">
                     <div class="mb-3">
                         <i class="fas fa-vote-yea fa-3x text-success"></i>
@@ -33,9 +43,14 @@
                 </div>
             </div>
         </div>
-
+    
+        <!-- Carte pour Résultats -->
         <div class="col-md-4">
-            <a href="{{ url_for('templates.resultats') }}">
+            {% if phase == 3 %}
+                <a href="{{ url_for('templates.resultats') }}">
+            {% else %}
+                <a href="javascript:void(0);" style="cursor: not-allowed !important;" onclick="alert('Les résultats ne sont pas encore disponibles.')" style="cursor: not-allowed;">
+            {% endif %}
                 <div class="card text-center shadow-sm h-100">
                     <div class="card-body">
                         <div class="mb-3">
@@ -48,6 +63,7 @@
             </a>
         </div>
     </div>
+    
 </div>
 
 <!-- Modal -->

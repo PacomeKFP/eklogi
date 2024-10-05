@@ -44,7 +44,9 @@ main ul li a{
 a:hover{
     text-decoration: none !important;
 }
-
+a.not-allowed{
+    cursor: e-resize !important;
+}
 a{
     text-decoration: none !important;
 }

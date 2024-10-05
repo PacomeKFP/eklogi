@@ -5,10 +5,12 @@ from flask import render_template, request, redirect, url_for, flash, Blueprint,
 from models import db, Candidature, Vote
 # from __main__ import app
 import config
-from config import POSTES, UPLOAD_FOLDER
+from config import POSTES, UPLOAD_FOLDER, get_phase, cameroun_tz
 from utils import hash, valider_matricule_candidat, valider_matricule_votant
 
-from datetime import timedelta
+
+
+from datetime import datetime
 import json
 
 router = Blueprint("templates", __name__)
@@ -16,7 +18,9 @@ router = Blueprint("templates", __name__)
 
 @router.route('/')
 def home():
-    return render_template('home.html', postes=config.POSTES, POSTES=config.POSTES)
+    now = datetime.now()
+    phase = get_phase(now)
+    return render_template('home.html', phase=phase, postes=config.POSTES, POSTES=config.POSTES)
 
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf'}
@@ -28,19 +32,21 @@ def allowed_file(filename):
 
 @router.route('/candidature', methods=['GET', 'POST'])
 def candidature():
+    now = datetime.now()
+    phase = get_phase(now)
     if request.method == 'POST':
-        matricule = request.form.get('matricule').upper()
+        matricule = request.form.get('matricule').upper().split()
         poste = request.form.get('poste')
         nom = request.form.get('nom')
 
         # Vérifications de base
         if not all([matricule, poste, nom]):
             flash("Tous les champs obligatoires doivent être remplis.", 'error')
-            return redirect(url_for('templates.candidature'))
+            return redirect(url_for('templates.candidature', phase=phase))
 
         if not valider_matricule_candidat(matricule, poste):
             flash("Votre matricule n'est pas autorisé pour ce poste.", 'error')
-            return redirect(url_for('templates.candidature'))
+            return redirect(url_for('templates.candidature', phase=phase))
 
         # # Vérification de l'existence d'une candidature
         # candidature_existante = Candidature.query.filter_by(
@@ -56,12 +62,12 @@ def candidature():
                 # candidature existante
                 flash(
                     "Ce matricule a déjà déposé une candidature pour ce poste.", 'info')
-                return redirect(url_for('templates.home'))
+                return redirect(url_for('templates.home', phase=phase))
 
-            if candidature.nom == nom:
+            if candidature.nom != nom:
                 flash(
-                    f"Le nom {candidature.nom} a été detecté pour ce matricule, il sera utilisé", 'info')
-                return redirect(url_for('templates.home'))
+                    f"Le nom {candidature.nom} a été trouvé pour ce matricule, il sera utilisé", 'info')
+                nom = candidature.nom
 
         # Gestion de l'upload de la photo
         if 'photo' not in request.files:
@@ -126,17 +132,19 @@ def candidature():
                 f'Une erreur est survenue lors de l\'enregistrement de votre candidature: {str(e)}', 'error')
             return redirect(url_for('templates.candidature'))
 
-    return render_template('candidature.html', postes=POSTES)
+    return render_template('candidature.html', postes=POSTES, phase=phase)
 
 
 @router.route('/vote/<poste>', methods=['GET', 'POST'])
 def vote(poste):
+    now = datetime.now()
+    phase = get_phase(now)
     if poste not in config.POSTES:
         flash("Poste invalide.", 'error')
         return redirect(url_for('templates.home'))
 
     if request.method == 'POST':
-        matricule = request.form.get('matricule').upper()
+        matricule = request.form.get('matricule').upper().split()
         candidat_id = request.form.get('candidat_id')
 
         if not matricule or not candidat_id:
@@ -177,11 +185,13 @@ def vote(poste):
         return redirect(url_for('templates.home'))
 
     candidats = Candidature.query.filter_by(poste=poste).all()
-    return render_template('vote.html', poste=poste, poste_texte=config.POSTES[poste], candidats=candidats)
+    return render_template('vote.html', poste=poste, phase=phase, poste_texte=config.POSTES[poste], candidats=candidats)
 
 
 @router.route('/resultats', methods=['GET'])
 def resultats():
+    now = datetime.now()
+    phase = get_phase(now)
     resultats = dict()
     for poste in POSTES.keys():
         candidatures = Candidature.query.filter_by(poste=poste).all()
@@ -196,4 +206,4 @@ def resultats():
                 (candidate_votes_number * 100 / total_votes_number), 1)
             resultats[poste][candidate.nom] = pourcentage
 
-    return render_template("resultats.html", POSTES=POSTES, resultats=resultats)
+    return render_template("resultats.html",phase=phase, POSTES=POSTES, resultats=resultats)

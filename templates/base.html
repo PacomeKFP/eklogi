@@ -77,18 +77,22 @@
                             <i class="fas fa-home"></i> Accueil
                         </a>
                     </li>
+                    {% if phase and phase == 1%}
                     <!-- Lien pour poser une candidature -->
                     <li class="nav-item">
                         <a href="{{ url_for('templates.candidature') }}" class="nav-link">
                             <i class="fas fa-file-alt"></i> Poser sa candidature
                         </a>
                     </li>
+                    {% endif%}
+                    {% if phase and phase == 3%}
                     <!-- Bouton pour consulter les résultats, mis en valeur -->
                     <li class="nav-item mt-2 mt-lg-0">
                         <a href="{{ url_for('templates.resultats') }}" class="btn btn-outline-primary w-100">
                             <i class="fas fa-check-circle"></i> Consulter les résultats
                         </a>
                     </li>
+                    {%endif%}
                 </ul>
             </div>
         </nav>
