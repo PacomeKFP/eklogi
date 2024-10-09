@@ -1,8 +1,8 @@
 from datetime import datetime, date
 import pytz
 
-DATABASE_URI = 'mysql://root:root_password@localhost:3306/eklogi'   # for MySQL
-# DATABASE_URI = 'sqlite:///elections.db' # for sqlite
+# DATABASE_URI = 'mysql://root:root_password@localhost:3306/eklogi'   # for MySQL
+DATABASE_URI = 'sqlite:///elections.db' # for sqlite
 
 
 # Configuration des postes disponibles

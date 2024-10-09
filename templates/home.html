@@ -3,7 +3,7 @@
 {% block title %}Accueil - Élections du Club{% endblock %}
 
 {% block content %}
-<h2 class="text-center" >Bienvenue aux élections <br> du Nouveau Bureau </h2>
+<h2 class="text-center">Bienvenue aux élections <br> du Nouveau Bureau </h2>
 
 <div class="container py-5">
     <div class="row g-4">
@@ -11,59 +11,63 @@
         <!-- Carte pour Candidature -->
         <div class="col-md-4">
             {% if phase == 1 %}
-                <a href="{{ url_for('templates.candidature') }}">
-            {% else %}
-                <a href="javascript:void(0);" style="cursor: not-allowed !important;" onclick="alert('La phase de candidatures n\'est pas active.')" style="cursor: not-allowed;">
-            {% endif %}
-                <div class="card text-center shadow-sm h-100">
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <i class="fas fa-user-plus fa-3x text-primary"></i>
+            <a href="{{ url_for('templates.candidature') }}">
+                {% else %}
+                <a href="javascript:void(0);" style="cursor: not-allowed !important;"
+                    onclick="alert('La phase de candidatures n\'est pas active.')" style="cursor: not-allowed;">
+                    {% endif %}
+                    <div class="card text-center shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <i class="fas fa-user-plus fa-3x text-primary"></i>
+                            </div>
+                            <h4 class="card-title">Poser ma candidature</h4>
+                            <p class="card-text">Présentez-vous à un des postes du club, en fonction de votre classe.
+                            </p>
                         </div>
-                        <h4 class="card-title">Poser ma candidature</h4>
-                        <p class="card-text">Présentez-vous à un des postes du club, en fonction de votre classe.</p>
                     </div>
-                </div>
-            </a>
+                </a>
         </div>
-    
+
         <!-- Carte pour Voter -->
         <div class="col-md-4">
-            {% if phase == 2 %}
-                <div class="card text-center shadow-sm h-100" data-bs-toggle="modal" data-bs-target="#modalPostes">
-            {% else %}
-                <div class="card text-center shadow-sm h-100" style="cursor: not-allowed !important;" onclick="alert('La phase de votes n\'est pas active.')">
-            {% endif %}
+            <div class="card text-center shadow-sm h-100" data-bs-toggle="modal" data-bs-target="#modalPostes">
                 <div class="card-body">
                     <div class="mb-3">
                         <i class="fas fa-vote-yea fa-3x text-success"></i>
                     </div>
+                    {% if phase == 2 %}
                     <h4 class="card-title">Voter</h4>
                     <p class="card-text">Exprimez votre choix pour chaque poste en allant au vote.</p>
+                    {% else %}
+                    <h4 class="card-title">Voir les candidatures</h4>
+                    <p class="card-text">Petit apperçu sur les candidatures deja déposées</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
-    
+
         <!-- Carte pour Résultats -->
         <div class="col-md-4">
             {% if phase == 3 %}
-                <a href="{{ url_for('templates.resultats') }}">
-            {% else %}
-                <a href="javascript:void(0);" style="cursor: not-allowed !important;" onclick="alert('Les résultats ne sont pas encore disponibles.')" style="cursor: not-allowed;">
-            {% endif %}
-                <div class="card text-center shadow-sm h-100">
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <i class="fas fa-poll fa-3x text-info"></i>
+            <a href="{{ url_for('templates.resultats') }}">
+                {% else %}
+                <a href="javascript:void(0);" style="cursor: not-allowed !important;"
+                    onclick="alert('Les résultats ne sont pas encore disponibles.')" style="cursor: not-allowed;">
+                    {% endif %}
+                    <div class="card text-center shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <i class="fas fa-poll fa-3x text-info"></i>
+                            </div>
+                            <h4 class="card-title">Résultats</h4>
+                            <p class="card-text">Consultez les résultats des élections.</p>
                         </div>
-                        <h4 class="card-title">Résultats</h4>
-                        <p class="card-text">Consultez les résultats des élections.</p>
                     </div>
-                </div>
-            </a>
+                </a>
         </div>
     </div>
-    
+
 </div>
 
 <!-- Modal -->
@@ -90,7 +94,7 @@
                             {% endfor %}
                         </ul>
                     </div>
-            
+
                     <!-- Colonne pour les postes adjoints -->
                     <div class="col-md-12">
                         <h6 class="text-uppercase text-muted">Postes Adjoints</h6>
@@ -107,7 +111,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
             </div>

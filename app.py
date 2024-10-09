@@ -19,6 +19,8 @@ UPLOAD_FOLDER = 'uploads'
 def uploaded_file(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
 
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 
 with app.app_context():
     db.create_all()

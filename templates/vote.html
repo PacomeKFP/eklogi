@@ -3,9 +3,22 @@
 {% block title %}Voter pour {{ poste_texte }} - Élections du Club{% endblock %}
 
 {% block content %}
+{% if phase == 2 %}
 <h2 class="text-start">Voter pour le poste de {{ poste_texte }}</h2>
+{% else %}
+<h3 class="text-start">Les candidatures - {{ poste_texte }}</h3><br>
+
+<p>
+    Vous n'avez pas encore la possibilité de voter, toute fois, vous pouvez voir les candidatures, consulter les plan
+    d'actions ou lire les visions afin de vous faire une idée sur les differents candidats
+</p>
+<br>
+
+{% endif %}
+
 {% if candidats %}
 <form method="POST" action="{{ url_for('templates.vote', poste=poste) }}" class="container">
+    {% if phase == 2%}
     <!-- Matricule -->
     <div class="form-row mb-4 text-start">
         <label for="matricule" class="col-form-label text-start">Votre matricule</label>
@@ -15,49 +28,58 @@
     </div>
 
     <h4 class="mb-4 text-start">Choisissez votre candidat :</h4>
-
+    {% endif%}
     <!-- Cartes pour chaque candidat -->
     <div class="row">
         {% for candidat in candidats %}
-        <div class="col-md-4 mb-4" onClick="selectCandidate('{{ candidat.id }}')">
-            <div class="card shadow-sm h-100"  id="card-{{candidat.id}}">
-                <div class="card-body text-center " >
-                    <div class="mb-3">
-                        {% if candidat.photo %}
-                        <img src="{{ url_for('uploaded_file', filename=candidat.photo) }}" alt="{{ candidat.nom }}"
-                            class="img-fluid rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+        
+        {% if phase == 2 %}
+            <div class="col-md-4 mb-4" onClick="selectCandidate('{{ candidat.id }}')">
+        {% else %}
+            <div class="col-md-4 mb-4"
+            onClick="alert('Ce n\'est pas encore le moment de voter, veuillez patienter encore ');">
+        {% endif %}
+                <div class="card shadow-sm h-100" id="card-{{candidat.id}}">
+                    <div class="card-body text-center ">
+                        <div class="mb-3">
+                            {% if candidat.photo %}
+                            <img src="{{ url_for('uploaded_file', filename=candidat.photo) }}" alt="{{ candidat.nom }}"
+                                class="img-fluid rounded-circle"
+                                style="width: 100px; height: 100px; object-fit: cover;">
+                            {% else %}
+                            <i class="fas fa-user-circle fa-3x text-primary"></i>
+                            {% endif %}
+                        </div>
+                        <!-- Radio button -->
+                        <input type="radio" class="hidden" id="candidat_{{ candidat.id }}" name="candidat_id"
+                            value="{{ candidat.id }}" required>
+                        <label for="candidat_{{ candidat.id }}">
+                            <h5 class="card-title mt-2">{{ candidat.nom }}</h5>
+                        </label>
+                        {% if poste == 'president' %}
+                        {% if candidat.programme %}
+                        <a href="{{ url_for('uploaded_file', filename=candidat.programme) }}"
+                            class="btn btn-outline-info btn-sm" download>
+                            Télécharger le programme <i class="fas fa-download ml-1"></i>
+                        </a>
                         {% else %}
-                        <i class="fas fa-user-circle fa-3x text-primary"></i>
+                        <p class="text-muted">Programme non disponible</p>
+                        {% endif %}
+                        {% else %}
+                        <p class="card-text">{{ candidat.description | truncate(100) }}</p>
                         {% endif %}
                     </div>
-                    <!-- Radio button -->
-                    <input type="radio" class="hidden" id="candidat_{{ candidat.id }}" name="candidat_id"
-                        value="{{ candidat.id }}" required>
-                    <label for="candidat_{{ candidat.id }}">
-                        <h4 class="card-title mt-2">{{ candidat.nom }}</h4>
-                    </label>
-                    {% if poste == 'president' %}
-                    {% if candidat.programme %}
-                    <a href="{{ url_for('uploaded_file', filename=candidat.programme) }}"
-                        class="btn btn-outline-info btn-sm" download>
-                        Télécharger le programme <i class="fas fa-download ml-1"></i>
-                    </a>
-                    {% else %}
-                    <p class="text-muted">Programme non disponible</p>
-                    {% endif %}
-                    {% else %}
-                    <p class="card-text">{{ candidat.description | truncate(100) }}</p>
-                    {% endif %}
                 </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
 
-    <!-- Bouton de soumission -->
-    <div class="text-center mt-4">
-        <button type="submit" class="btn btn-primary">Voter</button>
-    </div>
+        {% if phase==2 %}
+        <!-- Bouton de soumission -->
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary">Voter</button>
+        </div>
+        {% endif %}
 </form>
 
 <script>
