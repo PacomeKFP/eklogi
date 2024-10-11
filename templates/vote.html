@@ -66,7 +66,7 @@
                         <p class="text-muted">Programme non disponible</p>
                         {% endif %}
                         {% else %}
-                        <p class="card-text text-justify">{{ candidat.description }}</p>
+                        <p class="card-text text-justify">{{ candidat.description | truncate(300) }}</p>
                         {% endif %}
                     </div>
                 </div>
