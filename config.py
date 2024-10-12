@@ -1,4 +1,5 @@
 from datetime import datetime, date
+import hashlib
 import pytz
 
 # DATABASE_URI = 'mysql://root:root_password@localhost:3306/eklogi'   # for MySQL
@@ -65,3 +66,4 @@ MATRICULES_4GI = ['21P001', '21P187', '21P296', '21P372', '21P021', '21P027', '2
 
 # Clé secrète pour la session Flask
 SECRET_KEY = 'votre_cle_secrete_ici'  # À changer en production !
+SECU = "cb44afccd5ade75d24123e43e54ac1cc3f291e426fbcb6a7f03a3024e63a4053"

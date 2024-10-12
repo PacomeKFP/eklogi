@@ -5,15 +5,39 @@ from flask import render_template, request, redirect, url_for, flash, Blueprint,
 from models import db, Candidature, Vote
 # from __main__ import app
 import config
-from config import POSTES, UPLOAD_FOLDER, get_phase, cameroun_tz
+from config import POSTES, UPLOAD_FOLDER, get_phase, SECU
 from utils import hash, valider_matricule_candidat, valider_matricule_votant
-
 
 
 from datetime import datetime
 import json
 
 router = Blueprint("templates", __name__)
+
+
+@router.route('/delete_candidature', methods=['GET', 'POST'])
+def delete_candidature():
+    if request.method == 'POST':
+        print("Posting")
+        matricule = request.form.get("matricule").upper().strip()
+        poste = request.form.get("poste")
+        _secu = request.form.get("secu")
+
+        secu = hashlib.sha256(_secu.encode()).hexdigest()
+
+        if secu != SECU:
+            flash("Mauvaise sécurité. Vous n'avez pas les droits pour cela.")
+
+        # faire une requette pour supprimer la candidature en question
+        candidature = Candidature.query.filter_by(poste=poste, matricule=matricule).first()
+        if not candidature:
+            flash(f"Cette candidature n'existe pas", "info")
+            return render_template("delete_candidature.html", postes=POSTES)    
+        db.session.delete(candidature)
+        db.session.commit()
+        flash(f"En principe, la candidature de {candidature.nom} au poste de {poste} a été supprimée ", "succes")
+
+    return render_template("delete_candidature.html", postes=POSTES)
 
 
 @router.route('/')
@@ -48,26 +72,14 @@ def candidature():
             flash("Votre matricule n'est pas autorisé pour ce poste.", 'error')
             return redirect(url_for('templates.candidature', phase=phase))
 
-        # # Vérification de l'existence d'une candidature
-        # candidature_existante = Candidature.query.filter_by(
-        #     matricule=matricule, poste=poste).first()
-        # if candidature_existante:
-        #     flash("Ce matricule a déjà déposé une candidature pour ce poste.", 'info')
-        #     return redirect(url_for('templates.home'))
+        # Vérification de l'existence d'une candidature
+        candidature_existante = Candidature.query.filter_by(
+            matricule=matricule).first()
 
-        # FIX: Corrige l'erreur de double postulation
-        candidatures = Candidature.query.filter_by(matricule=matricule).all()
-        for candidature in candidatures:
-            if candidature.poste == poste:
-                # candidature existante
-                flash(
-                    "Ce matricule a déjà déposé une candidature pour ce poste.", 'info')
-                return redirect(url_for('templates.home', phase=phase))
-
-            if candidature.nom != nom:
-                flash(
-                    f"Le nom {candidature.nom} a été trouvé pour ce matricule, il sera utilisé", 'info')
-                nom = candidature.nom
+        if candidature_existante and candidature_existante.nom != nom:
+            flash(
+                f"Le nom {candidature_existante.nom} a été trouvé pour ce matricule, il sera utilisé", 'info')
+            nom = candidature_existante.nom
 
         # Gestion de l'upload de la photo
         if 'photo' not in request.files:
@@ -111,20 +123,30 @@ def candidature():
                 flash('La description/vision est obligatoire pour ce poste', 'error')
                 return redirect(request.url)
 
-        # Création de la nouvelle candidature
-        nouvelle_candidature = Candidature(
-            matricule=matricule,
-            poste=poste,
-            nom=nom,
-            photo=photo_filename,
-            programme=programme_filename,
-            description=description
-        )
-
         try:
-            db.session.add(nouvelle_candidature)
-            db.session.commit()
-            flash('Votre candidature a été enregistrée avec succès!', 'success')
+            if candidature_existante:
+                # Mise à jour de la candidature existante
+                candidature_existante.poste = poste
+                candidature_existante.nom = nom
+                candidature_existante.photo = photo_filename
+                candidature_existante.programme = programme_filename
+                candidature_existante.description = description
+                db.session.commit()
+                flash('Votre candidature a été mise à jour avec succès!', 'success')
+            else:
+                # Création d'une nouvelle candidature
+                nouvelle_candidature = Candidature(
+                    matricule=matricule,
+                    poste=poste,
+                    nom=nom,
+                    photo=photo_filename,
+                    programme=programme_filename,
+                    description=description
+                )
+                db.session.add(nouvelle_candidature)
+                db.session.commit()
+                flash('Votre candidature a été enregistrée avec succès!', 'success')
+
             return redirect(url_for('templates.home'))
         except Exception as e:
             db.session.rollback()
@@ -158,10 +180,12 @@ def vote(poste):
         # ip_hash = hashlib.sha256(request.remote_addr.encode()).hexdigest()
         matricule_hash = hashlib.sha256(matricule.encode()).hexdigest()
 
-        matricule_vote_existant = Vote.query.filter_by(poste=poste, matricule_hash=matricule_hash).first()
+        matricule_vote_existant = Vote.query.filter_by(
+            poste=poste, matricule_hash=matricule_hash).first()
 
-        if  matricule_vote_existant:
-            flash("Vous avez déjà voté pour ce poste. Si vous continuez, vous risquez d'être banni !", 'warning')
+        if matricule_vote_existant:
+            flash(
+                "Vous avez déjà voté pour ce poste. Si vous continuez, vous risquez d'être banni !", 'warning')
             return redirect(url_for('templates.vote', poste=poste))
 
         # [FIX]: empecher un candidat de voter
@@ -205,4 +229,4 @@ def resultats():
                 (candidate_votes_number * 100 / total_votes_number), 1)
             resultats[poste][candidate.nom] = pourcentage
 
-    return render_template("resultats.html",phase=phase, POSTES=POSTES, resultats=resultats)
+    return render_template("resultats.html", phase=phase, POSTES=POSTES, resultats=resultats)
