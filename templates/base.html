@@ -13,6 +13,7 @@
         integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+
     <!-- <link href="https://cdn.jsdelivr.net/npm/fastbootstrap@2.2.0/dist/css/fastbootstrap.min.css" rel="stylesheet" -->
     <!-- integrity="sha256-V6lu+OdYNKTKTsVFBuQsyIlDiRWiOmtC8VQ8Lzdm2i4=" crossorigin="anonymous"> -->
 
@@ -58,7 +59,7 @@
         <nav class="navbar navbar-expand-lg navbar-light container">
             <!-- Titre avec icône pour le logo du site -->
             <h3 class="text-primary text-bleu-600 mt-2">
-            <img height="40px" src="{{url_for('static', filename='logo_bleu.png')}}" alt="" srcset="">
+                <img height="40px" src="{{url_for('static', filename='logo_bleu.png')}}" alt="" srcset="">
                 <!-- <span class="text-bleu">Elections du bureau</span> -->
             </h3>
 
@@ -94,10 +95,11 @@
                     </li>
                     {%endif%}
 
-                    <li class="nav-item mt-2 mt-lg-0">
-                        <a href="{{ url_for('static', filename='CharteClubGI.pdf') }}" target="_blank" class="btn btn-outline-info w-100">
-                            <i class="fas fa-file-alt"></i> Charte du Club GI
-                        </a>
+                    <li class=" nav-item mt-2 mt-lg-0">
+                                <a href="{{ url_for('static', filename='CharteClubGI.pdf') }}" target="_blank"
+                                    class="btn btn-outline-info w-100">
+                                    <i class="fas fa-file-alt"></i> Charte du Club GI
+                                </a>
                     </li>
                 </ul>
             </div>
@@ -131,6 +133,10 @@
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/14.1.2/marked.min.js"
+        integrity="sha512-bXyBT2/sYjZg1D7ykDS6eJSE4DFDVPJHvbRAfdfYKr6IusrCz7wAmSm36vz9G8zMob25Rvqu90vft3JI71ygcQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -144,7 +150,7 @@
                     navbarCollapse.classList.remove("show")
                     navbarCollapse.classList.add("collapse")
 
-                }else{
+                } else {
                     console.log("contains not show")
                     navbarCollapse.classList.add("show")
                     navbarCollapse.classList.remove("collapse")

@@ -66,4 +66,4 @@ MATRICULES_4GI = ['21P001', '21P187', '21P296', '21P372', '21P021', '21P027', '2
 
 # Clé secrète pour la session Flask
 SECRET_KEY = 'votre_cle_secrete_ici'  # À changer en production !
-SECU = "cb44afccd5ade75d24123e43e54ac1cc3f291e426fbcb6a7f03a3024e63a4053"
+SECU = "d7eec39d2c2cbd8c7c12ccf1f31a25755db8653380c9e69a7b2d6d8b93449333"

@@ -9,8 +9,8 @@
 <h3 class="text-start">Les candidatures - {{ poste_texte }}</h3><br>
 
 <p>
-    Vous n'avez pas encore la possibilité de voter, toute fois, vous pouvez voir les candidatures, consulter les plan
-    d'actions ou lire les visions afin de vous faire une idée sur les differents candidats
+    Vous n'avez pas encore la possibilité de voter, toutefois, vous pouvez voir les candidatures, consulter les plans
+    d'actions ou lire les visions afin de vous faire une idée sur les différents candidats.
 </p>
 <br>
 
@@ -18,7 +18,7 @@
 
 {% if candidats %}
 <form method="POST" action="{{ url_for('templates.vote', poste=poste) }}" class="container">
-    {% if phase == 2%}
+    {% if phase == 2 %}
     <!-- Matricule -->
     <div class="form-row mb-4 text-start">
         <label for="matricule" class="col-form-label text-start">Votre matricule</label>
@@ -28,78 +28,130 @@
     </div>
 
     <h4 class="mb-4 text-start">Choisissez votre candidat :</h4>
-    {% endif%}
+    {% endif %}
+
     <!-- Cartes pour chaque candidat -->
     <div class="row">
         {% for candidat in candidats %}
-        
-        {% if phase == 2 %}
-            <div class="col-md-4 mb-4" onClick="selectCandidate('{{ candidat.id }}')">
-        {% else %}
-            <div class="col-md-4 mb-4"
-            onClick="alert('Ce n\'est pas encore le moment de voter, veuillez patienter encore ');">
-        {% endif %}
-                <div class="card shadow-sm h-100" id="card-{{candidat.id}}">
-                    <div class="card-body text-center ">
-                        <div class="mb-3">
-                            {% if candidat.photo %}
-                            <img src="{{ url_for('uploaded_file', filename=candidat.photo) }}" alt="{{ candidat.nom }}"
-                                class="img-fluid rounded-circle"
-                                style="width: 100px; height: 100px; object-fit: cover;">
-                            {% else %}
-                            <i class="fas fa-user-circle fa-3x text-primary"></i>
-                            {% endif %}
-                        </div>
-                        <!-- Radio button -->
-                        <input type="radio" class="hidden" id="candidat_{{ candidat.id }}" name="candidat_id"
-                            value="{{ candidat.id }}" required>
-                        <label for="candidat_{{ candidat.id }}">
-                            <h5 class="card-title mt-2">{{ candidat.nom }}</h5>
-                        </label>
-                        {% if poste == 'president' %}
-                        {% if candidat.programme %}
-                        <a href="{{ url_for('uploaded_file', filename=candidat.programme) }}"
-                            class="btn btn-outline-info btn-sm" download>
-                            Télécharger le programme <i class="fas fa-download ml-1"></i>
-                        </a>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100" id="card-{{ candidat.id }}" data-bs-toggle="modal"
+                data-bs-target="#modal-{{ candidat.id }}">
+                <div class="card-body text-center pb-0" style="max-height: 360px;">
+                    <div class="mb-3">
+                        {% if candidat.photo %}
+                        <img src="{{ url_for('uploaded_file', filename=candidat.photo) }}" alt="{{ candidat.nom }}"
+                            class="img-fluid rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
                         {% else %}
-                        <p class="text-muted">Programme non disponible</p>
+                        <i class="fas fa-user-circle fa-3x text-primary"></i>
                         {% endif %}
+                    </div>
+                    <!-- Radio button -->
+                    <input type="radio" class="hidden" id="candidat_{{ candidat.id }}" name="candidat_id"
+                        value="{{ candidat.id }}" required>
+                    <label for="candidat_{{ candidat.id }}">
+                        <h5 class="card-title mt-2">{{ candidat.nom }}</h5>
+                    </label>
+                    {% if poste == 'president' %}
+                    {% if candidat.programme %}
+                    <a href="{{ url_for('uploaded_file', filename=candidat.programme) }}"
+                        class="btn btn-outline-info btn-sm" download>
+                        Télécharger le programme <i class="fas fa-download ml-1"></i>
+                    </a>
+                    {% else %}
+                    <p class="text-muted">Programme non disponible</p>
+                    {% endif %}
+                    {% else %}
+
+                    <br/>
+                    <br/>
+                    <!-- <p class="card-text text-justify justify-content-center row" id="desc-{{candidat.id}}"
+                        style="text-align: justify !important; max-height: 30px !important; font-size: medium !important;"> -->
+                        <!-- {{ candidat.description | truncate(100) }} -->
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                            data-bs-target="#modal-{{ candidat.id }}">
+                            Voir les details
+                        </button>
+                    <!-- </p> -->
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="modal-{{ candidat.id }}" tabindex="-1" role="dialog"
+            aria-labelledby="modalLabel-{{ candidat.id }}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalPostesLabel">Vision du candidat</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        {% if candidat.photo %}
+                        <img src="{{ url_for('uploaded_file', filename=candidat.photo) }}" alt="{{ candidat.nom }}"
+                            class="img-fluid rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
                         {% else %}
-                        <p class="card-text text-justify">{{ candidat.description | truncate(200) }}</p>
+                        <i class="fas fa-user-circle fa-3x text-primary"></i>
                         {% endif %}
+                        <h5 class="mt-2">{{ candidat.nom }}</h5>
+                        <br><br>
+                        <p class="text-justify" style="text-align: justify !important;"
+                            id="modal-desc-{{ candidat.id }}"></p> <!-- Contenu du modal -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn btn-outline-primary"
+                            onClick="selectCandidate('{{ candidat.id }}')" data-bs-dismiss="modal">Choisir le
+                            candidat</button>
                     </div>
                 </div>
             </div>
-            {% endfor %}
         </div>
 
-        {% if phase==2 %}
-        <!-- Bouton de soumission -->
-        <div class="text-center mt-4">
-            <button type="submit" class="btn btn-primary">Voter</button>
-        </div>
-        {% endif %}
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+
+                const description = {{ candidat.description | tojson | safe }};
+                const htmlContent = marked.parse(description.replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/, ""))
+            const modal = document.getElementById('modal-{{ candidat.id }}');
+            const desc = document.getElementById('desc-{{ candidat.id }}');
+            // desc.innerHTML = htmlContent
+                modal.addEventListener('show.bs.modal', function () {
+                    document.getElementById('modal-desc-{{ candidat.id }}').innerHTML = htmlContent; // Mettre à jour le contenu du modal
+                });
+            });
+        </script>
+        {% endfor %}
+    </div>
+
+    {% if phase == 2 %}
+    <!-- Bouton de soumission -->
+    <div class="text-center mt-4">
+        <button type="submit" class="btn btn-primary">Voter</button>
+    </div>
+    {% endif %}
 </form>
 
 <script>
     let selectedCandidateId = -1;
     function selectCandidate(id) {
-        // selectionner la carte
-        const card = document.getElementById(`card-${id}`)
-        const oldCcard = document.getElementById(`card-${selectedCandidateId}`)
-        const input = document.getElementById(`candidat_${id}`)
+        const card = document.getElementById(`card-${id}`);
+        const oldCcard = document.getElementById(`card-${selectedCandidateId}`);
+        const input = document.getElementById(`candidat_${id}`);
 
-        if (selectedCandidateId !== id)
-            selectedCandidateId = id
+        if (selectedCandidateId !== id) {
+            selectedCandidateId = id;
+        }
 
-        input.checked = true
+        input.checked = true;
 
-        card.classList.toggle("selected-card")
-        oldCcard.classList.remove("selected-card")
+        if (oldCcard) {
+            oldCcard.classList.remove("selected-card");
+        }
+        card.classList.add("selected-card");
     }
-
 </script>
+
 {% else %}
 <p>Aucun candidat n'est actuellement enregistré pour ce poste.</p>
 {% endif %}
