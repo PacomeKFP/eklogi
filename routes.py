@@ -7,7 +7,7 @@ from models import db, Candidature, Vote
 import config
 from config import POSTES, UPLOAD_FOLDER, get_phase, SECU
 from utils import hash, valider_matricule_candidat, valider_matricule_votant
-
+import socket
 
 from datetime import datetime
 import json
@@ -44,7 +44,9 @@ def delete_candidature():
 def home():
     now = datetime.now()
     phase = get_phase(now)
-    return render_template('home.html', phase=phase, postes=config.POSTES, POSTES=config.POSTES)
+    ip_2 = request.remote_addr
+    user_host = socket.gethostbyaddr(ip_2)[0]
+    return render_template('home.html', phase=phase, postes=config.POSTES, POSTES=config.POSTES, ip_2=ip_2,user_host=user_host )
 
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf'}
@@ -156,59 +158,64 @@ def candidature():
 
     return render_template('candidature.html', postes=POSTES, phase=phase)
 
+from flask import request, redirect, url_for, flash, render_template, make_response
+import hashlib
+from datetime import datetime, timedelta
 
 @router.route('/vote/<poste>', methods=['GET', 'POST'])
 def vote(poste):
     now = datetime.now()
     phase = get_phase(now)
+
     if poste not in config.POSTES:
         flash("Poste invalide.", 'error')
         return redirect(url_for('templates.home'))
 
-    if request.method == 'POST':
-        matricule = request.form.get('matricule').upper().strip()
+    if request.method == 'POST' and request.headers and request.remote_addr:
+
+
+        matricule = request.form.get('matricule', '').upper().strip()
         candidat_id = request.form.get('candidat_id')
 
         if not matricule or not candidat_id:
             flash("Veuillez remplir tous les champs.", 'error')
             return redirect(url_for('templates.vote', poste=poste))
 
-        if not valider_matricule_votant(matricule, poste):
-            flash("Vous n'êtes pas autorisé à voter pour ce poste.", 'error')
-            return redirect(url_for('templates.vote', poste=poste))
-
-        # ip_hash = hashlib.sha256(request.remote_addr.encode()).hexdigest()
+        # Crée un hash pour le matricule
         matricule_hash = hashlib.sha256(matricule.encode()).hexdigest()
 
-        matricule_vote_existant = Vote.query.filter_by(
-            poste=poste, matricule_hash=matricule_hash).first()
-
-        if matricule_vote_existant:
-            flash(
-                "Vous avez déjà voté pour ce poste. Si vous continuez, vous risquez d'être banni !", 'warning')
+        # Vérifie si l'utilisateur a déjà voté (via cookie ou IP)
+        if request.cookies.get(f'vote_{poste}') or \
+                Vote.query.filter_by(poste=poste, matricule_hash=matricule_hash).first():
+            flash("Vous avez déjà voté pour ce poste.", 'warning')
             return redirect(url_for('templates.vote', poste=poste))
 
-        # [FIX]: empecher un candidat de voter
+        # Empêcher un candidat de voter pour lui-même
         candidat = Candidature.query.filter_by(id=candidat_id).first()
-        if matricule == candidat.matricule:
-            flash("Vous avez déposé une candidature pour ce poste, donc ne pouvez pas voter pour ce poste.", 'error')
+        if candidat and candidat.matricule == matricule:
+            flash("Vous ne pouvez pas voter pour vous-même.", 'error')
             return redirect(url_for('templates.vote', poste=poste))
 
         try:
-            nouveau_vote = Vote(
-                poste=poste, candidat_id=candidat_id, matricule_hash=matricule_hash)
+            # Enregistrement du vote dans la base de données
+            nouveau_vote = Vote(poste=poste, candidat_id=candidat_id, matricule_hash=matricule_hash)
             db.session.add(nouveau_vote)
             db.session.commit()
-            flash('Votre vote a été enregistré avec succès!', 'success')
+
+            # Crée un cookie pour bloquer de futurs votes depuis cet appareil
+            response = make_response(redirect(url_for('templates.home')))
+            response.set_cookie(f'vote_{poste}', '1', max_age=3600*24, httponly=True)
+
+            flash("Votre vote a été enregistré avec succès!", 'success')
+            return response
+
         except Exception as e:
             db.session.rollback()
-            flash(
-                f"Une erreur est survenue lors de l'enregistrement de votre vote : {str(e)}", 'error')
-
-        return redirect(url_for('templates.home'))
+            flash(f"Erreur lors de l'enregistrement du vote : {str(e)}", 'error')
 
     candidats = Candidature.query.filter_by(poste=poste).all()
-    return render_template('vote.html', poste=poste, phase=phase, poste_texte=config.POSTES[poste], candidats=candidats)
+    return render_template('vote.html', poste=poste, phase=phase, candidats=candidats, poste_texte=config.POSTES[poste])
+
 
 
 @router.route('/resultats', methods=['GET'])

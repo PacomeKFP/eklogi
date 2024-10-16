@@ -17,8 +17,8 @@
 {% endif %}
 
 {% if candidats %}
+
 <form method="POST" action="{{ url_for('templates.vote', poste=poste) }}" class="container">
-    {% if phase == 2 %}
     <!-- Matricule -->
     <div class="form-row mb-4 text-start">
         <label for="matricule" class="col-form-label text-start">Votre matricule</label>
@@ -28,7 +28,6 @@
     </div>
 
     <h4 class="mb-4 text-start">Choisissez votre candidat :</h4>
-    {% endif %}
 
     <!-- Cartes pour chaque candidat -->
     <div class="row">
@@ -124,12 +123,10 @@
         {% endfor %}
     </div>
 
-    {% if phase == 2 %}
     <!-- Bouton de soumission -->
     <div class="text-center mt-4">
         <button type="submit" class="btn btn-primary">Voter</button>
     </div>
-    {% endif %}
 </form>
 
 <script>

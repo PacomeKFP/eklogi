@@ -5,20 +5,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Élections du Club{% endblock %}</title>
+
+    <!-- Fichiers CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
 
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-
-    <!-- <link href="https://cdn.jsdelivr.net/npm/fastbootstrap@2.2.0/dist/css/fastbootstrap.min.css" rel="stylesheet" -->
-    <!-- integrity="sha256-V6lu+OdYNKTKTsVFBuQsyIlDiRWiOmtC8VQ8Lzdm2i4=" crossorigin="anonymous"> -->
-
+    <link rel="stylesheet" 
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+          integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
+        /* Appliquer la police Times New Roman à toute la page */
+        body, h1, h2, h3, h4, h5, h6, p, a, span, li, div, button, input, textarea {
+            font-family: "Times New Roman", Times, serif !important;
+        }
+
         body {
             background-color: #f8f9fa;
             /* Fond gris clair */
@@ -57,55 +59,47 @@
 <body>
     <header class="bg-light shadow-sm mb-4 pb-0">
         <nav class="navbar navbar-expand-lg navbar-light container">
-            <!-- Titre avec icône pour le logo du site -->
             <h3 class="text-primary text-bleu-600 mt-2">
                 <img height="40px" src="{{url_for('static', filename='logo_bleu.png')}}" alt="" srcset="">
-                <!-- <span class="text-bleu">Elections du bureau</span> -->
             </h3>
 
-            <!-- Bouton pour le menu responsive (menu burger) -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
                 aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <!-- Contenu de la navigation pour les écrans de taille normale et mobile -->
             <div class="collapse navbar-collapse" id="navbarContent">
                 <ul class="navbar-nav ms-auto">
-                    <!-- Lien vers la page d'accueil -->
                     <li class="nav-item">
                         <a href="{{ url_for('templates.home') }}" class="nav-link">
                             <i class="fas fa-home"></i> Accueil
                         </a>
                     </li>
-                    {% if phase and phase == 1%}
-                    <!-- Lien pour poser une candidature -->
+                    {% if phase and phase == 1 %}
                     <li class="nav-item">
                         <a href="{{ url_for('templates.candidature') }}" class="nav-link">
                             <i class="fas fa-envelope-open"></i> Poser sa candidature
                         </a>
                     </li>
-                    {% endif%}
-                    {% if phase and phase == 3%}
-                    <!-- Bouton pour consulter les résultats, mis en valeur -->
+                    {% endif %}
+                    {% if phase and phase == 3 %}
                     <li class="nav-item mt-2 mt-lg-0">
                         <a href="{{ url_for('templates.resultats') }}" class="nav-link">
-                            <i class="fas fa-check-circle text-success></i> Consulter les résultats
+                            <i class="fas fa-check-circle text-success"></i> Consulter les résultats
                         </a>
                     </li>
-                    {%endif%}
+                    {% endif %}
 
-                    <li class=" nav-item mt-2 mt-lg-0">
-                                <a href="{{ url_for('static', filename='CharteClubGI.pdf') }}" target="_blank"
-                                    class="btn btn-outline-info w-100">
-                                    <i class="fas fa-file-alt"></i> Charte du Club GI
-                                </a>
+                    <li class="nav-item mt-2 mt-lg-0">
+                        <a href="{{ url_for('static', filename='CharteClubGI.pdf') }}" target="_blank"
+                            class="btn btn-outline-info w-100">
+                            <i class="fas fa-file-alt"></i> Charte du Club GI
+                        </a>
                     </li>
                 </ul>
             </div>
         </nav>
     </header>
-
 
     <main>
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -122,10 +116,6 @@
         {% block content %}{% endblock %}
     </main>
 
-    <!-- <footer>
-        <p>&copy; 2024 - Licensé en BSD-3</p>
-    </footer> -->
-
     <script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
     <script src="{{ url_for('static', filename='chartjs.udm.min.js') }}"></script>
     <script src="{{ url_for('static', filename='main.js') }}"></script>
@@ -137,31 +127,25 @@
         integrity="sha512-bXyBT2/sYjZg1D7ykDS6eJSE4DFDVPJHvbRAfdfYKr6IusrCz7wAmSm36vz9G8zMob25Rvqu90vft3JI71ygcQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var navbarToggler = document.querySelector('.navbar-toggler');
             var navbarCollapse = document.querySelector('.navbar-collapse');
 
-            // Ouvrir/fermer le menu burger lorsque le bouton est cliqué
             navbarToggler.addEventListener('click', function () {
                 if (navbarCollapse.classList.contains("show")) {
-                    console.log("contains show")
-                    navbarCollapse.classList.remove("show")
-                    navbarCollapse.classList.add("collapse")
-
+                    navbarCollapse.classList.remove("show");
+                    navbarCollapse.classList.add("collapse");
                 } else {
-                    console.log("contains not show")
-                    navbarCollapse.classList.add("show")
-                    navbarCollapse.classList.remove("collapse")
+                    navbarCollapse.classList.add("show");
+                    navbarCollapse.classList.remove("collapse");
                 }
             });
 
-            // Fermer le menu burger lorsque l'utilisateur clique sur un lien du menu
             var navLinks = document.querySelectorAll('.navbar-nav .nav-link, .navbar-nav .btn');
             navLinks.forEach(function (link) {
                 link.addEventListener('click', function () {
-                    if (window.innerWidth < 992) { // Vérifie si l'écran est plus petit que 992px (taille mobile)
+                    if (window.innerWidth < 992) {
                         navbarCollapse.classList.remove('show');
                     }
                 });

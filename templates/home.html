@@ -3,19 +3,14 @@
 {% block title %}Accueil - Élections du Club{% endblock %}
 
 {% block content %}
-<h2 class="text-center">Bienvenue aux élections <br> du Nouveau Bureau </h2>
+<h2 class="text-center">Bienvenue aux élections <br> du Nouveau Bureau {{ip_2}} et {{user_host}}</h2>
 
 <div class="container py-5">
     <div class="row g-4">
 
         <!-- Carte pour Candidature -->
         <div class="col-md-4">
-            {% if phase == 1 %}
             <a href="{{ url_for('templates.candidature') }}">
-                {% else %}
-                <a href="javascript:void(0);" style="cursor: not-allowed !important;"
-                    onclick="alert('La phase de candidatures n\'est pas active.')" style="cursor: not-allowed;">
-                    {% endif %}
                     <div class="card text-center shadow-sm h-100">
                         <div class="card-body">
                             <div class="mb-3">
@@ -54,12 +49,7 @@
 
         <!-- Carte pour Résultats -->
         <div class="col-md-4">
-            {% if phase == 3 %}
             <a href="{{ url_for('templates.resultats') }}">
-                {% else %}
-                <a href="javascript:void(0);" style="cursor: not-allowed !important;"
-                    onclick="alert('Les résultats ne sont pas encore disponibles.')" style="cursor: not-allowed;">
-                    {% endif %}
                     <div class="card text-center shadow-sm h-100">
                         <div class="card-body">
                             <div class="mb-3">
