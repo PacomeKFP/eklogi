@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Supprimer une candidature - Élections du Club{% endblock %}
+
+{% block content %}
+<h2>Supprimer une candidature</h2>
+<!-- TODO: Modifier ce formulaire pour le mettre dans un cadre de largeur fixe t le centrer -->
+<form method="POST" action="{{ url_for('templates.delete_candidature') }}" enctype="multipart/form-data"
+    class="jumbotron">
+
+    <!-- Aperçu de la photo de profil -->
+
+
+    <!-- Matricule et nom sur la même ligne -->
+
+    <div class="form-row row">
+
+        <div class="form-group">
+            <label for="matricule">Matricule :</label>
+            <input type="text" class="form-control" id="matricule" name="matricule" required>
+        </div>
+    </div>
+
+    <!-- Poste à pourvoir, sans filtrage basé sur le matricule -->
+    <div class="form-group">
+        <label for="poste">Poste :</label>
+        <select id="poste" name="poste" class="form-control" required>
+            <option value="" disabled selected>Choisir un poste</option>
+            {% for code, nom in postes.items() %}
+            <option value="{{ code }}">{{ nom }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-row row">
+
+        <div class="form-group">
+            <label for="matricule">Code de sécu (Password) :</label>
+            <input type="text" class="form-control" id="secu" name="secu" required>
+        </div>
+    </div>
+
+
+    <!-- Bouton de soumission -->
+    <button type="submit" class="btn btn-primary">Supprimer la candidature</button>
+
+</form>
+
+<script>
+    const posteSelect = document.getElementById('poste');
+    const programmeContainer = document.getElementById('programme-container');
+    const descriptionContainer = document.getElementById('description-container');
+
+
+    function previewImage(event) {
+        const reader = new FileReader();
+        reader.onload = function () {
+            const output = document.getElementById('photoPreview');
+            output.src = reader.result;
+            output.style.display = 'block';
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    // Fonction pour gérer les champs à afficher selon le poste choisi
+    function gererChamps() {
+        const poste = posteSelect.value;
+
+        // Si le poste est "Président"
+        if (poste === 'president') {
+            programmeContainer.style.display = 'block';
+            descriptionContainer.style.display = 'none';
+            document.getElementById('programme').required = true;
+            document.getElementById('description').required = false;
+        } else {
+            programmeContainer.style.display = 'none';
+            descriptionContainer.style.display = 'block';
+            document.getElementById('programme').required = false;
+            document.getElementById('description').required = true;
+        }
+    }
+
+    // Écouteur d'événement pour gérer les champs en fonction du poste
+    posteSelect.addEventListener('change', gererChamps);
+</script>
+
+{% endblock %}

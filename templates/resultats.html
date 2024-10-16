@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Résultats des élections - Élections du Club{% endblock %}
+
+{% block content %}
+<h2 class="mb-4 text-center">Résultats des élections</h2>
+
+<div class="row">
+    {% for poste, resultats_poste in resultats.items() %}
+    {% if resultats_poste %}
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ POSTES[poste] }}</h5>
+                <canvas id="chart-{{ poste }}"></canvas>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+</div>
+
+<script>
+
+    function generateColors(numColors) {
+        const colors = [];
+        const hueStep = 360 / numColors;
+
+        for (let i = 0; i < numColors; i++) {
+            const hue = i * hueStep;
+            const saturation = 70 + Math.random() * 10; // 70-80%
+            const lightness = 50 + Math.random() * 10;  // 50-60%
+            colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%, 0.8)`);
+        }
+
+        return colors;
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var resultats = {{ resultats | tojson | safe
+    }};
+    var postes = {{ POSTES | tojson | safe }};
+
+    console.log(resultats)
+
+    for (var poste in resultats) {
+        if (Object.keys(resultats[poste]).length > 0) {
+            var ctx = document.getElementById('chart-' + poste);
+            var candidats = Object.keys(resultats[poste]);
+            var colors = generateColors(candidats.length);
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(resultats[poste]),
+                    datasets: [{
+                        data: Object.values(resultats[poste]),
+                        backgroundColor: colors,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    var label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += parseFloat(context.raw).toFixed(1) + '%';
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+    });
+</script>
+{% endblock %}

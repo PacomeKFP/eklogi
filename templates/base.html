@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Élections du Club{% endblock %}</title>
+
+    <!-- Fichiers CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+
+    <link rel="stylesheet" 
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+          integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        /* Appliquer la police Times New Roman à toute la page */
+        body, h1, h2, h3, h4, h5, h6, p, a, span, li, div, button, input, textarea {
+            font-family: "Times New Roman", Times, serif !important;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            /* Fond gris clair */
+        }
+
+        .navbar-nav .nav-link,
+        .navbar-brand {
+            color: #343a40 !important;
+            /* Texte foncé pour meilleur contraste */
+        }
+
+        @media (max-width: 991px) {
+            .navbar-collapse {
+                position: fixed;
+                top: 56px;
+                /* Ajustez selon la hauteur de votre navbar */
+                left: 0;
+                padding-left: 15px;
+                padding-right: 15px;
+                padding-bottom: 15px;
+                width: 75%;
+                height: 100%;
+                background-color: #f8f9fa;
+                transition: all 0.3s ease;
+                display: block;
+                transform: translateX(-100%);
+            }
+
+            .navbar-collapse.show {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="bg-light shadow-sm mb-4 pb-0">
+        <nav class="navbar navbar-expand-lg navbar-light container">
+            <h3 class="text-primary text-bleu-600 mt-2">
+                <img height="40px" src="{{url_for('static', filename='logo_bleu.png')}}" alt="" srcset="">
+            </h3>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a href="{{ url_for('templates.home') }}" class="nav-link">
+                            <i class="fas fa-home"></i> Accueil
+                        </a>
+                    </li>
+                    {% if phase and phase == 1 %}
+                    <li class="nav-item">
+                        <a href="{{ url_for('templates.candidature') }}" class="nav-link">
+                            <i class="fas fa-envelope-open"></i> Poser sa candidature
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if phase and phase == 3 %}
+                    <li class="nav-item mt-2 mt-lg-0">
+                        <a href="{{ url_for('templates.resultats') }}" class="nav-link">
+                            <i class="fas fa-check-circle text-success"></i> Consulter les résultats
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    <li class="nav-item mt-2 mt-lg-0">
+                        <a href="{{ url_for('static', filename='CharteClubGI.pdf') }}" target="_blank"
+                            class="btn btn-outline-info w-100">
+                            <i class="fas fa-file-alt"></i> Charte du Club GI
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+            <div>{{ message }}</div>
+            <i class="fa fa-multiply"></i>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='chartjs.udm.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/14.1.2/marked.min.js"
+        integrity="sha512-bXyBT2/sYjZg1D7ykDS6eJSE4DFDVPJHvbRAfdfYKr6IusrCz7wAmSm36vz9G8zMob25Rvqu90vft3JI71ygcQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var navbarToggler = document.querySelector('.navbar-toggler');
+            var navbarCollapse = document.querySelector('.navbar-collapse');
+
+            navbarToggler.addEventListener('click', function () {
+                if (navbarCollapse.classList.contains("show")) {
+                    navbarCollapse.classList.remove("show");
+                    navbarCollapse.classList.add("collapse");
+                } else {
+                    navbarCollapse.classList.add("show");
+                    navbarCollapse.classList.remove("collapse");
+                }
+            });
+
+            var navLinks = document.querySelectorAll('.navbar-nav .nav-link, .navbar-nav .btn');
+            navLinks.forEach(function (link) {
+                link.addEventListener('click', function () {
+                    if (window.innerWidth < 992) {
+                        navbarCollapse.classList.remove('show');
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+
+</html>
