@@ -44,9 +44,7 @@ def delete_candidature():
 def home():
     now = datetime.now()
     phase = get_phase(now)
-    ip_2 = request.remote_addr
-    user_host = socket.gethostbyaddr(ip_2)[0]
-    return render_template('home.html', phase=phase, postes=config.POSTES, POSTES=config.POSTES, ip_2=ip_2,user_host=user_host )
+    return render_template('home.html', phase=phase, postes=config.POSTES, POSTES=config.POSTES )
 
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf'}

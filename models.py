@@ -20,3 +20,9 @@ class Vote(db.Model):
     ip_hash = db.Column(db.String(64), nullable=True)
     matricule_hash = db.Column(db.String(64), nullable=False)
 
+class Client(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    candidature_id = db.Column(db.Integer, db.ForeignKey('candidature.id'), nullable=False)
+    ip_addr = db.Column(db.String(64), nullable=False)
+    hostname = db.Column(db.String(64), nullable=False)
+

@@ -12,6 +12,9 @@ def hash(string:str):
     return hashlib.sha256(string.encode()).hexdigest()
 
 
+
+
+
 def valider_matricule_candidat(matricule, poste):
     print(matricule)
     # il doit etre soit un 4GI soit un 3GI
