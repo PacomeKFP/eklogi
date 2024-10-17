@@ -4,13 +4,17 @@ from models import db
 import config
 from routes import router
 import logging
+from flask_migrate import Migrate
 
 
 app = Flask(__name__)
 app.register_blueprint(router)
 app.config['SQLALCHEMY_DATABASE_URI'] = config.DATABASE_URI
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['SECRET_KEY'] = config.SECRET_KEY
 db.init_app(app)
+migrate = Migrate(app, db)
+
 
 UPLOAD_FOLDER = 'uploads'
 

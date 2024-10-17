@@ -2,7 +2,8 @@ import hashlib
 import os
 from werkzeug.utils import secure_filename
 from flask import render_template, request, redirect, url_for, flash, Blueprint, jsonify
-from models import db, Candidature, Vote
+from models import *
+
 # from __main__ import app
 import config
 from config import POSTES, UPLOAD_FOLDER, get_phase, SECU
@@ -160,59 +161,59 @@ from flask import request, redirect, url_for, flash, render_template, make_respo
 import hashlib
 from datetime import datetime, timedelta
 
-@router.route('/vote/<poste>', methods=['GET', 'POST'])
-def vote(poste):
-    now = datetime.now()
-    phase = get_phase(now)
+# @router.route('/vote/<poste>', methods=['GET', 'POST'])
+# def vote(poste):
+#     now = datetime.now()
+#     phase = get_phase(now)
 
-    if poste not in config.POSTES:
-        flash("Poste invalide.", 'error')
-        return redirect(url_for('templates.home'))
+#     if poste not in config.POSTES:
+#         flash("Poste invalide.", 'error')
+#         return redirect(url_for('templates.home'))
 
-    if request.method == 'POST' and request.headers and request.remote_addr:
+#     if request.method == 'POST' and request.headers and request.remote_addr:
 
 
-        matricule = request.form.get('matricule', '').upper().strip()
-        candidat_id = request.form.get('candidat_id')
+#         matricule = request.form.get('matricule', '').upper().strip()
+#         candidat_id = request.form.get('candidat_id')
 
-        if not matricule or not candidat_id:
-            flash("Veuillez remplir tous les champs.", 'error')
-            return redirect(url_for('templates.vote', poste=poste))
+#         if not matricule or not candidat_id:
+#             flash("Veuillez remplir tous les champs.", 'error')
+#             return redirect(url_for('templates.vote', poste=poste))
 
-        # Crée un hash pour le matricule
-        matricule_hash = hashlib.sha256(matricule.encode()).hexdigest()
+#         # Crée un hash pour le matricule
+#         matricule_hash = hashlib.sha256(matricule.encode()).hexdigest()
 
-        # Vérifie si l'utilisateur a déjà voté (via cookie ou IP)
-        if request.cookies.get(f'vote_{poste}') or \
-                Vote.query.filter_by(poste=poste, matricule_hash=matricule_hash).first():
-            flash("Vous avez déjà voté pour ce poste.", 'warning')
-            return redirect(url_for('templates.vote', poste=poste))
+#         # Vérifie si l'utilisateur a déjà voté (via cookie ou IP)
+#         if request.cookies.get(f'vote_{poste}') or \
+#                 Vote.query.filter_by(poste=poste, matricule_hash=matricule_hash).first():
+#             flash("Vous avez déjà voté pour ce poste.", 'warning')
+#             return redirect(url_for('templates.vote', poste=poste))
 
-        # Empêcher un candidat de voter pour lui-même
-        candidat = Candidature.query.filter_by(id=candidat_id).first()
-        if candidat and candidat.matricule == matricule:
-            flash("Vous ne pouvez pas voter pour vous-même.", 'error')
-            return redirect(url_for('templates.vote', poste=poste))
+#         # Empêcher un candidat de voter pour lui-même
+#         candidat = Candidature.query.filter_by(id=candidat_id).first()
+#         if candidat and candidat.matricule == matricule:
+#             flash("Vous ne pouvez pas voter pour vous-même.", 'error')
+#             return redirect(url_for('templates.vote', poste=poste))
 
-        try:
-            # Enregistrement du vote dans la base de données
-            nouveau_vote = Vote(poste=poste, candidat_id=candidat_id, matricule_hash=matricule_hash)
-            db.session.add(nouveau_vote)
-            db.session.commit()
+#         try:
+#             # Enregistrement du vote dans la base de données
+#             nouveau_vote = Vote(poste=poste, candidat_id=candidat_id, matricule_hash=matricule_hash)
+#             db.session.add(nouveau_vote)
+#             db.session.commit()
 
-            # Crée un cookie pour bloquer de futurs votes depuis cet appareil
-            response = make_response(redirect(url_for('templates.home')))
-            response.set_cookie(f'vote_{poste}', '1', max_age=3600*24, httponly=True)
+#             # Crée un cookie pour bloquer de futurs votes depuis cet appareil
+#             response = make_response(redirect(url_for('templates.home')))
+#             response.set_cookie(f'vote_{poste}', '1', max_age=3600*24, httponly=True)
 
-            flash("Votre vote a été enregistré avec succès!", 'success')
-            return response
+#             flash("Votre vote a été enregistré avec succès!", 'success')
+#             return response
 
-        except Exception as e:
-            db.session.rollback()
-            flash(f"Erreur lors de l'enregistrement du vote : {str(e)}", 'error')
+#         except Exception as e:
+#             db.session.rollback()
+#             flash(f"Erreur lors de l'enregistrement du vote : {str(e)}", 'error')
 
-    candidats = Candidature.query.filter_by(poste=poste).all()
-    return render_template('vote.html', poste=poste, phase=phase, candidats=candidats, poste_texte=config.POSTES[poste])
+#     candidats = Candidature.query.filter_by(poste=poste).all()
+#     return render_template('vote.html', poste=poste, phase=phase, candidats=candidats, poste_texte=config.POSTES[poste])
 
 
 
@@ -235,3 +236,71 @@ def resultats():
             resultats[poste][candidate.nom] = pourcentage
 
     return render_template("resultats.html", phase=phase, POSTES=POSTES, resultats=resultats)
+
+
+from flask import request, redirect, url_for, flash, render_template
+from datetime import datetime
+
+@router.route('/vote/<poste>', methods=['GET', 'POST'])
+def vote(poste):
+    now = datetime.now()
+    phase = get_phase(now)
+
+    if poste not in config.POSTES:
+        flash("Poste invalide.", 'error')
+        return redirect(url_for('templates.home'))
+
+    if request.method == 'POST':
+        matricule = request.form.get('matricule', '').upper().strip()
+        candidat_id = request.form.get('candidat_id')
+
+        if not matricule or not candidat_id:
+            flash("Veuillez remplir tous les champs.", 'error')
+            return redirect(url_for('templates.vote', poste=poste))
+
+        # Récupérer les informations de l'appareil
+        user_agent = request.headers.get('User-Agent', 'Inconnu')
+        ip_address = request.remote_addr
+
+        # Vérifier si un fingerprint existe déjà pour cet appareil
+        fingerprint = Fingerprint.query.filter_by(user_agent=user_agent, ip_address=ip_address).first()
+
+        if not fingerprint:
+            fingerprint = Fingerprint(user_agent=user_agent, ip_address=ip_address)
+            db.session.add(fingerprint)
+            db.session.commit()
+
+        # Vérification cohérence du matricule entre Local Storage et l'entrée utilisateur
+        stored_matricule = request.cookies.get('matricule')
+        if stored_matricule and stored_matricule != matricule:
+            flash(f"Cet appareil est déjà lié au matricule {stored_matricule}.", 'error')
+            return redirect(url_for('templates.vote', poste=poste))
+
+        # Créer un nouveau client si nécessaire
+        client = Client.query.filter_by(matricule=matricule).first()
+        if client:
+            flash("Ce matricule a déjà été utilisé.", 'warning')
+            return redirect(url_for('templates.vote', poste=poste))
+
+        try:
+            new_client = Client(candidature_id=candidat_id, fingerprint_id=fingerprint.id, matricule=matricule)
+            db.session.add(new_client)
+            db.session.commit()
+
+            nouveau_vote = Vote(poste=poste, candidat_id=candidat_id, client_id=new_client.id)
+            db.session.add(nouveau_vote)
+            db.session.commit()
+
+            # Stocker le matricule dans un cookie/Local Storage via le JavaScript
+            response = redirect(url_for('templates.home'))
+            response.set_cookie('matricule', matricule)
+
+            flash("Votre vote a été enregistré avec succès!", 'success')
+            return response
+
+        except Exception as e:
+            db.session.rollback()
+            flash("Une erreur est survenue lors de l'enregistrement du vote.", 'error')
+
+    candidats = Candidature.query.filter_by(poste=poste).all()
+    return render_template('vote.html', poste=poste, phase=phase, candidats=candidats, poste_texte=config.POSTES[poste])

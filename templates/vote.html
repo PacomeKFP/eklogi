@@ -18,7 +18,7 @@
 
 {% if candidats %}
 
-<form method="POST" action="{{ url_for('templates.vote', poste=poste) }}" class="container">
+<form method="POST" action="{{ url_for('templates.vote', poste=poste) }}" class="container" id="vote-form">
     <!-- Matricule -->
     <div class="form-row mb-4 text-start">
         <label for="matricule" class="col-form-label text-start">Votre matricule</label>
@@ -60,17 +60,12 @@
                     <p class="text-muted">Programme non disponible</p>
                     {% endif %}
                     {% else %}
-
                     <br/>
                     <br/>
-                    <!-- <p class="card-text text-justify justify-content-center row" id="desc-{{candidat.id}}"
-                        style="text-align: justify !important; max-height: 30px !important; font-size: medium !important;"> -->
-                        <!-- {{ candidat.description | truncate(100) }} -->
-                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
-                            data-bs-target="#modal-{{ candidat.id }}">
-                            Voir les details
-                        </button>
-                    <!-- </p> -->
+                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                        data-bs-target="#modal-{{ candidat.id }}">
+                        Voir les détails
+                    </button>
                     {% endif %}
                 </div>
             </div>
@@ -109,12 +104,10 @@
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-
                 const description = {{ candidat.description | tojson | safe }};
-                const htmlContent = marked.parse(description.replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/, ""))
-            const modal = document.getElementById('modal-{{ candidat.id }}');
-            const desc = document.getElementById('desc-{{ candidat.id }}');
-            // desc.innerHTML = htmlContent
+                const htmlContent = marked.parse(description.replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/, ""));
+                const modal = document.getElementById('modal-{{ candidat.id }}');
+                const desc = document.getElementById('desc-{{ candidat.id }}');
                 modal.addEventListener('show.bs.modal', function () {
                     document.getElementById('modal-desc-{{ candidat.id }}').innerHTML = htmlContent; // Mettre à jour le contenu du modal
                 });
@@ -131,9 +124,11 @@
 
 <script>
     let selectedCandidateId = -1;
+
+    // Fonction pour sélectionner un candidat
     function selectCandidate(id) {
         const card = document.getElementById(`card-${id}`);
-        const oldCcard = document.getElementById(`card-${selectedCandidateId}`);
+        const oldCard = document.getElementById(`card-${selectedCandidateId}`);
         const input = document.getElementById(`candidat_${id}`);
 
         if (selectedCandidateId !== id) {
@@ -142,11 +137,26 @@
 
         input.checked = true;
 
-        if (oldCcard) {
-            oldCcard.classList.remove("selected-card");
+        if (oldCard) {
+            oldCard.classList.remove("selected-card");
         }
         card.classList.add("selected-card");
     }
+
+    // Vérification du matricule avec Local Storage
+    document.getElementById('vote-form').addEventListener('submit', function (e) {
+        const matriculeInput = document.getElementById('matricule');
+        const storedMatricule = localStorage.getItem('matricule');
+
+        const enteredMatricule = matriculeInput.value.trim().toUpperCase();
+        
+        if (storedMatricule && storedMatricule !== enteredMatricule) {
+            e.preventDefault();
+            alert(`Cet appareil est déjà lié au matricule ${storedMatricule}.`);
+        } else if (!storedMatricule) {
+            localStorage.setItem('matricule', enteredMatricule);
+        }
+    });
 </script>
 
 {% else %}

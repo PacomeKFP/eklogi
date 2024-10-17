@@ -6,6 +6,7 @@ import pytz
 DATABASE_URI = 'sqlite:///elections.db' # for sqlite
 
 
+
 # Configuration des postes disponibles
 POSTES = {
     'president': 'Président(e)',
